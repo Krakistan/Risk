@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Risco Colorado</title>
+    <link rel="stylesheet" href="{% static 'css/styless.css' %}">
+    <link rel="stylesheet" href="{% static 'images' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url("/static/images/fondo.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+
+
+<body>
+    <header>
+
+
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+
+                <a><img src="{% static 'images/image.png' %}" alt="" class="logo"></a>
+                <div class="navbar-brand col-md-4 titulos">
+                    <h2>El Risco Colorado</h2>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'nosotros' %}">Sobre Nosotros</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'cotizacion' %}">Cotiza</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'carrito' %}">Carrito</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+    </header>
+
+    <section class="container my-5" id="productos">
+
+        <div class="search-container">
+            <input type="text" placeholder="Buscar productos..." class="search-input" id="searchBar">
+            <button class="search-button">🔍</button>
+        </div>
+
+
+        <!-- Botón para agrupar por categoría -->
+        <div class="d-flex justify-content-center mb-4">
+            <!-- Selector de Categorías -->
+            <select id="categorySelect" class="form-select" onchange="filtrarPorCategoria()">
+                <option value="">Todas las Categorías</option>
+                <option value="Materiales de Construcción">Materiales de Construcción</option>
+                <option value="Cemento y Hormigón">Cemento y Hormigón</option>
+                <option value="Arena y Áridos">Arena y Áridos</option>
+                <option value="Grava y Piedra">Grava y Piedra</option>
+                <option value="Maicillo">Maicillo</option>
+                <option value="Ladrillos y Bloques">Ladrillos y Bloques</option>
+                <option value="Yeso y Mortero">Yeso y Mortero</option>
+                <option value="Acero y Varillas">Acero y Varillas</option>
+                <option value="Madera y Tableros">Madera y Tableros</option>
+                <option value="Aislantes e Impermeabilizantes">Aislantes e Impermeabilizantes</option>
+                <option value="Maquinaria Pesada">Maquinaria Pesada</option>
+                <option value="Retroexcavadoras">Retroexcavadoras</option>
+                <option value="Excavadoras">Excavadoras</option>
+                <option value="Bulldozers">Bulldozers</option>
+                <option value="Motoniveladoras">Motoniveladoras</option>
+                <option value="Compactadoras y Rodillos">Compactadoras y Rodillos</option>
+                <option value="Cargadores Frontales">Cargadores Frontales</option>
+                <option value="Gruas y Montacargas">Gruas y Montacargas</option>
+                <option value="Dumpers y Camiones Tolva">Dumpers y Camiones Tolva</option>
+                <option value="Herramientas Eléctricas">Herramientas Eléctricas</option>
+                <option value="Taladros y Rotomartillos">Taladros y Rotomartillos</option>
+                <option value="Amoladoras y Pulidoras">Amoladoras y Pulidoras</option>
+                <option value="Sierras y Cortadoras">Sierras y Cortadoras</option>
+                <option value="Generadores Eléctricos">Generadores Eléctricos</option>
+                <option value="Compresores de Aire">Compresores de Aire</option>
+                <option value="Martillos Neumáticos">Martillos Neumáticos</option>
+                <option value="Equipos para Construcción">Equipos para Construcción</option>
+                <option value="Andamios y Escaleras">Andamios y Escaleras</option>
+                <option value="Mezcladoras de Cemento">Mezcladoras de Cemento</option>
+                <option value="Torres de Iluminación">Torres de Iluminación</option>
+                <option value="Vibradores de Concreto">Vibradores de Concreto</option>
+                <option value="Bateas y Carretillas">Bateas y Carretillas</option>
+                <option value="Equipos de Protección Personal">Equipos de Protección Personal</option>
+                <option value="Cascos de Seguridad">Cascos de Seguridad</option>
+                <option value="Guantes y Gafas de Protección">Guantes y Gafas de Protección</option>
+                <option value="Chalecos Reflectantes">Chalecos Reflectantes</option>
+                <option value="Botas de Seguridad">Botas de Seguridad</option>
+                <option value="Arnés y Equipos de Altura">Arnés y Equipos de Altura</option>
+                <option value="Accesorios y Repuestos">Accesorios y Repuestos</option>
+                <option value="Repuestos para Maquinaria">Repuestos para Maquinaria</option>
+                <option value="Lubricantes y Aceites">Lubricantes y Aceites</option>
+                <option value="Filtros y Mangueras">Filtros y Mangueras</option>
+                <option value="Equipos para Transporte">Equipos para Transporte</option>
+                <option value="Carros de Mano">Carros de Mano</option>
+                <option value="Pallets y Elevadores">Pallets y Elevadores</option>
+                <option value="Cintas Transportadoras">Cintas Transportadoras</option>
+                <option value="Equipos para Demolición">Equipos para Demolición</option>
+                <option value="Martillos Hidráulicos">Martillos Hidráulicos</option>
+                <option value="Cortadoras de Pavimento">Cortadoras de Pavimento</option>
+                <option value="Perforadoras y Equipos de Demolición">Perforadoras y Equipos de Demolición</option>
+            </select>
+        </div>
+
+
+        <!-- Contenedor de columnas -->
+        <div class="row">
+            <!-- Columna Izquierda: Productos en Venta -->
+            <div class="col-md-6">
+                <h2 class="tituloproductos text-center mb-4">Productos en Venta</h2>
+                <div class="productos-container scrollable">
+                    <div class="productos venta">
+                        {% for producto in productos_venta %}
+                        <div class="product-card card mb-3" style="max-width: 540px;"
+                            data-nombre="{{ producto.nombre | lower }}"
+                            data-categoria="{{ producto.categoria | lower }}">
+                            <div class="row g-0">
+                                <!-- Imagen del Producto -->
+                                <div class="col-md-4">
+                                    {% if producto.imagen %}
+                                    <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start"
+                                        alt="{{ producto.nombre }}">
+                                    {% else %}
+                                    <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
+                                        alt="Imagen no disponible">
+                                    {% endif %}
+                                </div>
+                                <!-- Contenido de la Tarjeta -->
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                                        <p class="card-text">{{ producto.descripcion }}</p>
+                                        <p class="card-text">Precio: ${{ producto.precio }}</p>
+                                        <p class="card-text">Categoría: {{ producto.categoria }}</p>
+                                        {% if user.is_authenticated %}
+                                        <a href="{% url 'carrito_with_id' indx=producto.id %}"
+                                            class="nav-link nav-button">Agregar al Carrito</a>
+                                        {% if messages %}
+                                        <ul class="messages">
+                                            {% for message in messages %}
+                                            <li class="{{ message.tags }}">{{ message }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% endif %}
+
+                                        {% else %}
+                                        <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Comprar</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No hay productos disponibles para la venta.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Columna Derecha: Productos en Arriendo -->
+            <div class="col-md-6">
+                <h2 class="tituloproductos text-center mb-4">Productos en Arriendo</h2>
+                <div class="productos-container scrollable">
+                    <div class="productos arriendo">
+                        {% for producto in productos_arriendo %}
+                        <div class="product-card card mb-3" style="max-width: 540px;"
+                            data-nombre="{{ producto.nombre | lower }}"
+                            data-categoria="{{ producto.categoria | lower }}">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    {% if producto.imagen %}
+                                    <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start"
+                                        alt="{{ producto.nombre }}">
+                                    {% else %}
+                                    <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
+                                        alt="Imagen no disponible">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                                        <p class="card-text">{{ producto.descripcion }}</p>
+                                        <p class="card-text">Precio: ${{ producto.precio }}</p>
+                                        <p class="card-text">Categoría: {{ producto.categoria }}</p>
+                                        {% if user.is_authenticated %}
+                                        <a href="{% url 'carrito_with_id' indx=producto.id %}"
+                                            class="nav-link nav-button">Agregar al Carrito</a>
+                                        {% if messages %}
+                                        <ul class="messages">
+                                            {% for message in messages %}
+                                            <li class="{{ message.tags }}">{{ message }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% endif %}
+
+                                        {% else %}
+                                        <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Comprar</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No hay productos disponibles para arriendo.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+
+
+    <footer>
+        <p>Risco Colorado, 2024. Todos los derechos reservados.</p>
+        <ul>
+            <li><a href="#">Contacto</a></li>
+            <li><a href="#">Políticas de privacidad</a></li>
+            <li><a href="#">Términos y condiciones</a></li>
+        </ul>
+        <div class="social-media">
+            <a href="#"><img src="{% static 'images/facebook.png' %}" alt="facebook"></a>
+            <a href="#"><img src="{% static 'images/instagram.png' %}" alt="instagram"></a>
+            <a href="#"><img src="{% static 'images/twitter.png' %}" alt="twitter"></a>
+        </div>
+    </footer>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(elems);
+        });
+    </script>
+
+    <script>
+        function filtrarPorCategoria() {
+            const selectedCategory = document.getElementById('categorySelect').value.toLowerCase();
+            const productCards = document.querySelectorAll('.product-card');
+
+            productCards.forEach(function (card) {
+                const categoria = card.getAttribute('data-categoria').toLowerCase();
+
+                // Mostrar todas las tarjetas si no hay categoría seleccionada
+                if (selectedCategory === "") {
+                    card.style.display = 'block';
+                } else if (categoria === selectedCategory) {
+                    card.style.display = 'block'; // Mostrar si coincide
+                } else {
+                    card.style.display = 'none'; // Ocultar si no coincide
+                }
+            });
+        }
+    </script>
+
+    <script>
+        // Selecciona la barra de búsqueda y agrega un evento 'input' para filtrar los productos en tiempo real
+        document.getElementById('searchBar').addEventListener('input', function () {
+            let searchQuery = this.value.toLowerCase();
+            let productCards = document.querySelectorAll('.product-card');
+
+            productCards.forEach(function (card) {
+                let nombre = card.getAttribute('data-nombre');
+                let categoria = card.getAttribute('data-categoria');
+
+                // Filtrar por nombre o categoría
+                if (nombre.includes(searchQuery) || categoria.includes(searchQuery)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+
+</html>
