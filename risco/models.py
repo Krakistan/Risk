@@ -122,9 +122,16 @@ class Reserva(models.Model):
 
 class Orden(models.Model):
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  # Referencia al modelo de usuario configurado en settings.py
+        settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE,
-        related_name="ordenes"
+        related_name="ordenes"  # Relación inversa clara para el usuario
+    )
+    direccion_envio = models.OneToOneField(
+        'DireccionEnvio', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='orden_asociada'  # Cambiar el related_name para evitar conflicto
     )
     fecha_orden = models.DateTimeField(auto_now_add=True)
     completo = models.BooleanField(default=False)
@@ -137,6 +144,55 @@ class Orden(models.Model):
     @property
     def get_cantidad_carrito(self):
         return sum(articulo.cantidad for articulo in self.articuloorden_set.all())
+
+
+class DireccionEnvio(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True
+    )
+    orden = models.OneToOneField(
+        Orden, 
+        on_delete=models.CASCADE, 
+        related_name='direccion_asignada'  # Cambiar el related_name para evitar conflicto
+    )
+    direccion = models.CharField(max_length=200)
+    ciudad = models.CharField(max_length=100)
+    region = models.CharField(max_length=100)
+    codigo_postal = models.CharField(max_length=20)
+    fecha_agregado = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.direccion}, {self.ciudad}, {self.region} ({self.codigo_postal})"
+
+
+
+
+
+class DetalleOrden(models.Model):
+    orden = models.ForeignKey(
+        'Orden', 
+        related_name='detalles', 
+        on_delete=models.CASCADE
+    )
+    producto = models.CharField(max_length=255)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    cantidad = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto} (Orden ID: {self.orden.id})"
+
+    @property
+    def get_total(self):
+        return self.precio * self.cantidad
+
+
+
+
+
+
 class ArticuloOrden(models.Model):
     orden = models.ForeignKey(Orden, related_name='articuloorden_set', on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
@@ -149,17 +205,20 @@ class ArticuloOrden(models.Model):
     def get_total(self):
         return self.producto.precio * self.cantidad
 
-class DireccionEnvio(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="direcciones")
-    orden = models.ForeignKey(Orden, on_delete=models.SET_NULL, null=True, blank=True, related_name="direccion_envio")
-    direccion = models.CharField(max_length=200)
-    ciudad = models.CharField(max_length=100)
-    region = models.CharField(max_length=100)
-    codigo_postal = models.CharField(max_length=20)
-    fecha_agregado = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
-        return f"Dirección: {self.direccion}, {self.ciudad}, {self.region} ({self.codigo_postal})"
+class Region(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+class Ciudad(models.Model):
+    nombre = models.CharField(max_length=100)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='ciudades')
+
+    def __str__(self):
+        return f"{self.nombre} ({self.region.nombre})"
+
 
 class Compra(models.Model):
     nombre_cliente = models.CharField(max_length=50)
@@ -189,4 +248,11 @@ class Carrito(models.Model):
     def __str__(self):
         return f"{self.usuario.username} - {self.producto.nombre} ({self.cantidad})"
 
-    
+
+
+class RentalCartItem(models.Model):
+    producto = models.ForeignKey(Productos, on_delete=models.CASCADE)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    cantidad = models.IntegerField(default=1)
+

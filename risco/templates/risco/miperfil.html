@@ -21,150 +21,61 @@
             margin: 0;
         }
 
-        /* Formulario centrado */
-        .formulario1 {
-            text-align: center;
+        .botones-centro {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            /* Flexbox para organizar los botones */
             justify-content: center;
+            /* Centra los botones horizontalmente */
+            gap: 20px;
+            /* Espaciado entre los botones */
             margin-top: 20px;
-        }
-        .formulario2{
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            align-items: left;
-            justify-content: left;
-            
-        }
-        /* Estilo de la caja de entrada */
-        .inputbox {
-            position: relative;
-            margin-top: 20px;
-            max-width: 310px;
-            border-bottom: 2px solid #171717;
+            /* Margen superior para separación */
         }
 
-        .inputbox input,
-        .inputbox textarea {
-            width: 100%;
-            border: none;
-            outline: none;
-            font-size: 1rem;
-            padding: 5px;
-            color: #060606;
-            background: none;
-        }
+        .btn-estilo {
+            padding: 10px 20px;
 
-        /* Posicionamiento de los labels */
-        .inputbox label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: translateY(0);
-            color: #000000;
-            font-size: 1rem;
-            pointer-events: none;
-            transition: all 0.3s ease-in-out;
-            padding-left: 5px;
-        }
-
-        input:focus~label,
-        input:valid~label,
-        textarea:focus~label,
-        textarea:valid~label {
-            top: -20px;
-            font-size: 0.85rem;
-        }
-
-        /* Campo de comentarios con margen alrededor */
-        .inputbox-cotiza {
-            position: relative;
-            margin-top: 23px;
-            max-width: 310px;
-            border-bottom: 2px solid #171717;
-        }
-
-        .inputbox-cotiza textarea {
-            width: 100%;
-            height: 80px;
-            border: none;
-            outline: none;
-            font-size: 1rem;
-            padding: 5px;
-            color: #060606;
-            background: none;
-        }
-
-        /* Ajuste de labels para el textarea */
-        .inputbox-cotiza label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: translateY(0);
-            color: #000000;
-            font-size: 1rem;
-            pointer-events: none;
-            transition: all 0.3s ease-in-out;
-            padding-left: 5px;
-        }
-
-        textarea:focus~label,
-        textarea:valid~label {
-            top: -20px;
-            font-size: 0.85rem;
-        }
-
-        /* Botón de envío */
-        .boton {
-            width: 100%;
-            max-width: 310px;
-            height: 40px;
-            border-radius: 50px;
             background-color: #95460e;
-            border: 2px solid #95460e;
-            outline: none;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.7s ease;
+
             color: #ffffff;
-            margin-top: 30px;
-        }
 
-        .boton:hover {
-            background-color: #5e2e0c;
-        }
+            border-radius: 20px;
 
+            text-decoration: none;
 
-
-
-
-        /* Título */
-        .titulocotiza {
-            color: #000000;
             text-align: center;
-            
+
+            font-size: 16px;
+
+            transition: all 0.3s ease-in-out;
+
         }
+
+        .btn-estilo:hover {
+            background-color: #5e2e0c;
+            /* Fondo más oscuro en hover */
+            color: #ffffff;
+            /* Mantiene el texto blanco */
+        }
+
         .user-name-container {
             background-color: #5e2e0c;
-            color: #ffffff; /* Texto blanco */
-            border-radius: 20px; /* Bordes redondeados */
-            padding: 8px 15px; /* Espaciado interno */
-            display: inline-block; /* Tamaño ajustado al contenido */
-            font-weight: bold; /* Texto en negrita */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
-            font-size: 16px; /* Tamaño del texto */
-            margin: 0 10px; /* Separación con otros elementos */
-            text-align: center; /* Alineación del texto */
-            transition: all 0.3s ease; /* Transición suave */
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: inline-block;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            margin: 0 10px;
+            text-align: center;
+            transition: all 0.3s ease;
         }
-        
+
         .user-name-container:hover {
             background-color: #5e2e0c;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-            cursor: pointer; /* Manita al pasar el mouse */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
         }
     </style>
 </head>
@@ -235,47 +146,57 @@
 
     </header>
 
+
     <section>
-        <div class="container-cotizacion mt-5">
+        <div class="container-registro mt-5">
             <div class="card card-body">
-                <h3 class="titulocotiza">Haz tu cotización</h3>
-                <form class="formulario1" method="post">
-                    <div class="formulario2">
-                                            
-                    {% csrf_token %}
+                <h2 class="titulo">Perfil del Usuario</h2>
+                <!-- Información del usuario -->
 
-                    <!-- Campo de nombre -->
-                    <div class="inputbox">
-                        {{ cotizacionform.nombre }}
-                        <label>Nombre</label>
-                    </div>
 
-                    <!-- Campo de correo electrónico -->
-                    <div class="inputbox">
-                        {{ cotizacionform.correo }}
-                        <label>Correo Electrónico</label>
-                    </div>
+                <div class="formulario2">
+                    <!-- Datos del usuario -->
+                    <form id="perfilForm" method="POST" action="{% url 'editar_datos' %}">
+                        {% csrf_token %}
+                        <div class="inputbox">
+                            <label for="nombre"><strong>Nombre:</strong></label>
+                            <input type="text" id="nombre" name="nombre" class="form-control"
+                                value="{{ usuario.first_name }}" readonly
+                                style="border: none; border-bottom: 2px solid black; outline: none; box-shadow: none;">
+                        </div>
+                        <div class="inputbox mt-3">
+                            <label for="email"><strong>Correo Electrónico:</strong></label>
+                            <input type="email" id="email" name="email" class="form-control" value="{{ usuario.email }}"
+                                readonly
+                                style="border: none; border-bottom: 2px solid black; outline: none; box-shadow: none;">
+                        </div>
+                        <!-- Botón para editar -->
+                        <div class="botones-centro">
+                            <a id="toggleEdit" class="btn-estilo">Cambiar datos</a>
+                            <a href="{% url 'password_reset' %}" class="btn-estilo">Cambiar contraseña</a>
+                        </div>
 
-                    <!-- Campo de teléfono -->
-                    <div class="inputbox">
-                        {{ cotizacionform.telefono }}
-                        <label>Teléfono</label>
-                    </div>
+                    </form>
 
-                    <!-- Campo de comentarios -->
-                    <div class="inputbox-cotiza">
-                        {{ cotizacionform.mensaje }}
-                        <label>Comentarios o preguntas</label>
-                    </div>
+                </div>
 
-                    <!-- Botón de envío -->
-                    <button type="submit" class="boton">Enviar Cotización</button>
-                    </div>
-                </form>
-
+                <!-- Lista de compras realizadas -->
+                <h3 class="titulo mt-4">Historial de Compras</h3>
+                <ul class="list-group">
+                    {% for compra in compras %}
+                    <li class="list-group-item">
+                        <p><strong>Nombre Cliente:</strong> {{ compra.nombre_cliente }}</p>
+                        <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">No se encontraron compras realizadas.</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </section>
+
+
 
 
     <footer>
@@ -293,14 +214,36 @@
     </footer>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var elems = document.querySelectorAll('.sidenav');
-            var instances = M.Sidenav.init(elems);
+            const toggleButton = document.getElementById('toggleEdit');
+            const nombreField = document.getElementById('nombre');
+            const emailField = document.getElementById('email');
+            const form = document.getElementById('perfilForm');
+            let isEditable = false;
+
+            toggleButton.addEventListener('click', function () {
+                if (isEditable) {
+                    // Desactivar edición y enviar el formulario
+                    nombreField.readOnly = true;
+                    emailField.readOnly = true;
+                    form.submit(); // Enviar formulario
+                } else {
+                    // Habilitar edición
+                    nombreField.readOnly = false;
+                    emailField.readOnly = false;
+                    nombreField.focus(); // Poner el cursor en el primer campo
+                }
+                isEditable = !isEditable;
+                toggleButton.textContent = isEditable ? 'Guardar cambios' : 'Editar datos';
+            });
         });
-    </script>
-    <script>
-        function filtrarPorCategoria() {
-            alert("Esta funcionalidad estará disponible pronto.");
-            // Aquí puedes implementar la lógica para filtrar por categoría
+
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const preview = document.getElementById('previewImage');
+                preview.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
         }
     </script>
 
@@ -308,6 +251,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+
 </body>
 
 </html>

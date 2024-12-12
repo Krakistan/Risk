@@ -190,6 +190,8 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
@@ -202,17 +204,22 @@
                             <a class="nav-link nav-button" href="{% url 'cotizacion' %}">Cotiza</a>
                         </li>
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'carrito' %}">Carrito</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link nav-button dropdown-toggle d-flex align-items-center p-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
+                                <img src="{% static 'images/acceso.png' %}" alt="User" class="rounded-circle" style="width: 24px; height: 24px; margin-right: 5px;">
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'miperfil' %}">Mi perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'carrito' %}">Carrito</a></li>
+                                <li><a class="dropdown-item" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a></li>
+                            </ul>
                         </li>
                         {% else %}
                         <li class="nav-item">
                             <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
                         </li>
                         {% endif %}
+                        
                     </ul>
                 </div>
             </div>

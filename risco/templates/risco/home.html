@@ -39,6 +39,8 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
@@ -51,17 +53,39 @@
                             <a class="nav-link nav-button" href="{% url 'cotizacion' %}">Cotiza</a>
                         </li>
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'carrito' %}">Carrito</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link nav-button dropdown-toggle nav-link nav-button d-flex align-items-center p-1"
+                                href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                style="background-color: transparent; border: none;">
+                                <img src="{% static 'images/acceso.png' %}" alt="User" class="rounded-circle"
+                                    style="width: 24px; height: 24px; margin-right: 5px;">
+                                <p>{{ user.first_name }}</p>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'miperfil' %}">Mi perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'carrito' %}">Carrito</a></li>
+                                <li><a class="dropdown-item" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a></li>
+                                {% if user.is_staff or user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_productos' %}">Gestionar
+                                        Productos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_usuarios' %}">Usuarios
+                                        Registrados</a>
+                                </li>
+                                {% endif %}
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
-                        </li>
+
+
+
                         {% else %}
                         <li class="nav-item">
                             <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
                         </li>
                         {% endif %}
+
                     </ul>
                 </div>
             </div>
@@ -164,7 +188,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title">{{ producto.nombre }}</h5>
                                         <p class="card-text">{{ producto.descripcion }}</p>
-                                        <p class="card-text">Precio: ${{ producto.precio }}</p>
+                                        <p class="card-text">Precio: ${{ producto.precio|floatformat:0 }}</p>
                                         <p class="card-text">Categoría: {{ producto.categoria }}</p>
                                         {% if user.is_authenticated %}
                                         <a href="{% url 'carrito_with_id' indx=producto.id %}"
@@ -204,8 +228,7 @@
                             <div class="row g-0">
                                 <div class="col-md-4">
                                     {% if producto.imagen %}
-                                    <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start"
-                                        alt="{{ producto.nombre }}">
+                                    <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start" alt="{{ producto.nombre }}">
                                     {% else %}
                                     <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
                                         alt="Imagen no disponible">
@@ -215,36 +238,60 @@
                                     <div class="card-body">
                                         <h5 class="card-title">{{ producto.nombre }}</h5>
                                         <p class="card-text">{{ producto.descripcion }}</p>
-                                        <p class="card-text">Precio: ${{ producto.precio }}</p>
-                                        <p class="card-text">Categoría: {{ producto.categoria }}</p>
+                                        <p class="card-text">Precio por día: ${{ producto.precio|floatformat:0 }}</p>
+                                        <p class="card-text">Stock disponible: {{ producto.stock }}</p>
                                         {% if user.is_authenticated %}
-                                        <a href="{% url 'carrito_with_id' indx=producto.id %}"
-                                            class="nav-link nav-button">Agregar al Carrito</a>
-                                        {% if messages %}
-                                        <ul class="messages">
-                                            {% for message in messages %}
-                                            <li class="{{ message.tags }}">{{ message }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                        {% endif %}
-
+                                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#formularioArriendo{{ producto.id }}" aria-expanded="false"
+                                            aria-controls="formularioArriendo{{ producto.id }}">
+                                            Elegir fechas y cantidad
+                                        </button>
                                         {% else %}
-                                        <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Comprar</a>
+                                        <a class="btn btn-secondary btn-sm" href="{% url 'iniciar_sesion' %}">Iniciar Sesión para
+                                            Rentar</a>
                                         {% endif %}
+            
+                                        <!-- Formulario colapsable -->
+                                        <div class="collapse mt-3" id="formularioArriendo{{ producto.id }}">
+                                            <div class="card card-body">
+                                                <form method="POST" action="{% url 'carrito' producto.id %}">
+                                                    {% csrf_token %}
+                                                    <div class="mb-3">
+                                                        <label for="fecha_inicio_{{ producto.id }}" class="form-label">Fecha de
+                                                            Inicio</label>
+                                                        <input type="date" class="form-control" id="fecha_inicio_{{ producto.id }}"
+                                                            name="fecha_inicio" min="{{ today|date:'Y-m-d' }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="fecha_fin_{{ producto.id }}" class="form-label">Fecha de
+                                                            Fin</label>
+                                                        <input type="date" class="form-control" id="fecha_fin_{{ producto.id }}"
+                                                            name="fecha_fin" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="cantidad_{{ producto.id }}" class="form-label">Cantidad</label>
+                                                        <input type="number" class="form-control" id="cantidad_{{ producto.id }}"
+                                                            name="cantidad" min="1" max="{{ producto.stock }}" required>
+                                                    </div>
+                                                    <input type="hidden" name="producto_id" value="{{ producto.id }}">
+                                                    <button type="submit" class="btn btn-success w-100">Agregar al Carrito</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {% empty %}
-                        <p>No hay productos disponibles para arriendo.</p>
+                        <p class="text-center">No hay productos disponibles para arriendo.</p>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-        </div>
-
-
+            
     </section>
+
+
 
 
     <footer>
@@ -269,7 +316,30 @@
             var instances = M.Sidenav.init(elems);
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const startDateInput = document.getElementById('fecha_inicio');
+            const endDateInput = document.getElementById('fecha_fin');
 
+            // Set initial min date for start date to today
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.min = today;
+
+            startDateInput.addEventListener('change', function () {
+                // Set minimum end date to be at least one day after start date
+                const startDate = new Date(startDateInput.value);
+                startDate.setDate(startDate.getDate() + 1);
+
+                const minEndDate = startDate.toISOString().split('T')[0];
+                endDateInput.min = minEndDate;
+
+                // Reset end date if it's before the new minimum
+                if (new Date(endDateInput.value) <= new Date(startDateInput.value)) {
+                    endDateInput.value = '';
+                }
+            });
+        });
+    </script>
     <script>
         function filtrarPorCategoria() {
             const selectedCategory = document.getElementById('categorySelect').value.toLowerCase();

@@ -164,18 +164,6 @@
                         <li class="nav-item">
                             <a class="nav-link nav-button" href="{% url 'cotizacion' %}">Cotiza</a>
                         </li>
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'carrito' %}">Carrito</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
-                        </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
-                        </li>
-                        {% endif %}
                     </ul>
                 </div>
             </div>

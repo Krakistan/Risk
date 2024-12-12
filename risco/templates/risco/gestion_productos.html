@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Risco Colorado</title>
+    <link rel="stylesheet" href="{% static 'css/styless.css' %}">
+    <link rel="stylesheet" href="{% static 'images' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url("/static/images/fondo.jpg");
+            background-size: cover;
+            background-position: center;
+            
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 10px 0;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .user-name-container {
+            background-color: #5e2e0c;
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: inline-block;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            margin: 0 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .user-name-container:hover {
+            background-color: #5e2e0c;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .titulo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .inputbox {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .inputbox input,
+        .inputbox textarea,
+        .inputbox select {
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            outline: none;
+            resize: none;
+        }
+
+        .inputbox label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 10px 0;
+            pointer-events: none;
+            transition: 0.5s;
+        }
+
+        .inputbox input:focus~label,
+        .inputbox textarea:focus~label,
+        .inputbox select:focus~label,
+        .inputbox input:not(:placeholder-shown)~label,
+        .inputbox textarea:not(:placeholder-shown)~label,
+        .inputbox select:not(:placeholder-shown)~label {
+            top: -20px;
+            left: 0;
+            color: #5e2e0c;
+            font-size: 12px;
+        }
+
+        .boton {
+            width: 100%;
+            padding: 10px;
+            background: #5e2e0c;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background 0.5s;
+        }
+
+        .boton:hover {
+            background: #7b4518;
+        }
+    </style>
+
+</head>
+
+
+<body>
+    <header>
+
+
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+
+                <a><img src="{% static 'images/image.png' %}" alt="" class="logo"></a>
+                <div class="navbar-brand col-md-4 titulos">
+                    <h2>El Risco Colorado</h2>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'nosotros' %}">Sobre Nosotros</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'cotizacion' %}">Cotiza</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link nav-button dropdown-toggle nav-link nav-button d-flex align-items-center p-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
+                                <img src="{% static 'images/acceso.png' %}" alt="User" class="rounded-circle" style="width: 24px; height: 24px; margin-right: 5px;">
+                                <p>{{ user.first_name }}</p>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'miperfil' %}">Mi perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'carrito' %}">Carrito</a></li>
+                                <li><a class="dropdown-item" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a></li>
+                                {% if user.is_staff or user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_productos' %}">Gestionar Productos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_usuarios' %}">Usuarios Registrados</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+
+
+
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
+                        </li>
+                        {% endif %}
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+    </header>
+
+    
+    <section class="container my-5">
+        <div class="row">
+            <!-- Columna Izquierda: Lista de Productos -->
+            <div class="col-md-6">
+                <h2 class="mb-4">Lista de Productos</h2>
+    
+                <!-- Barra de búsqueda -->
+                <div class="mb-3">
+                    <input type="text" id="searchProducts" class="form-control" placeholder="Buscar productos...">
+                </div>
+    
+                <!-- Lista de productos -->
+                <div class="row">
+                    <!-- Columna Izquierda: Productos en Venta -->
+                    <div class="col-md-6">
+                        <h2 class="tituloproductos text-center mb-4">Productos en Venta</h2>
+                        <div class="productos-container scrollable">
+                            <div class="productos venta">
+                                {% for producto in productos_venta %}
+                                {% if producto.stock > 0 %}
+                                <div class="product-card card mb-3 position-relative" style="max-width: 540px;"
+                                    data-id="{{ producto.id }}" data-nombre="{{ producto.nombre }}"
+                                    data-descripcion="{{ producto.descripcion }}" data-precio="{{ producto.precio }}"
+                                    data-stock="{{ producto.stock }}" data-categoria="{{ producto.categoria }}"
+                                    data-tipo="{{ producto.tipo }}" onclick="cargarProductoDesdeHTML(this)">
+                                    <!-- Botón para abrir el modal de eliminación -->
+                                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                                        onclick="abrirEliminarModal('{{ producto.id }}', '{{ producto.nombre }}', '{{ producto.stock }}'); event.stopPropagation();">
+                                        X
+                                    </button>
+                                    <div class="row g-0">
+                                        <!-- Imagen del Producto -->
+                                        <div class="col-md-4">
+                                            {% if producto.imagen %}
+                                            <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start"
+                                                alt="{{ producto.nombre }}">
+                                            {% else %}
+                                            <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
+                                                alt="Imagen no disponible">
+                                            {% endif %}
+                                        </div>
+                                        <!-- Contenido de la Tarjeta -->
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                                <p class="card-text">{{ producto.descripcion }}</p>
+                                                <p class="card-text">Precio: ${{ producto.precio|floatformat:0 }} CLP</p>
+                                                <p class="card-text">Categoría: {{ producto.categoria }}</p>
+                                                <p class="card-text">Stock: {{ producto.stock }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Columna Derecha: Productos en Arriendo -->
+                    <div class="col-md-6">
+                        <h2 class="tituloproductos text-center mb-4">Productos en Arriendo</h2>
+                        <div class="productos-container scrollable">
+                            <div class="productos arriendo">
+                                {% for producto in productos_arriendo %}
+                                {% if producto.stock > 0 %}
+                                <div class="product-card card mb-3 position-relative" style="max-width: 540px;"
+                                    data-id="{{ producto.id }}" data-nombre="{{ producto.nombre }}"
+                                    data-descripcion="{{ producto.descripcion }}" data-precio="{{ producto.precio }}"
+                                    data-stock="{{ producto.stock }}" data-categoria="{{ producto.categoria }}"
+                                    data-tipo="{{ producto.tipo }}" onclick="cargarProductoDesdeHTML(this)">
+                                    <!-- Botón para abrir el modal de eliminación -->
+                                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                                        onclick="abrirEliminarModal('{{ producto.id }}', '{{ producto.nombre }}', '{{ producto.stock }}'); event.stopPropagation();">
+                                        X
+                                    </button>
+                                    <div class="row g-0">
+                                        <!-- Imagen del Producto -->
+                                        <div class="col-md-4">
+                                            {% if producto.imagen %}
+                                            <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start"
+                                                alt="{{ producto.nombre }}">
+                                            {% else %}
+                                            <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
+                                                alt="Imagen no disponible">
+                                            {% endif %}
+                                        </div>
+                                        <!-- Contenido de la Tarjeta -->
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                                <p class="card-text">{{ producto.descripcion }}</p>
+                                                <p class="card-text">Precio: ${{ producto.precio|floatformat:0 }} CLP</p>
+                                                <p class="card-text">Categoría: {{ producto.categoria }}</p>
+                                                <p class="card-text">Stock: {{ producto.stock }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Columna Derecha: Formulario -->
+            <div class="container col-md-6 mt-4">
+                <div class="card card-body p-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 id="formTitle" class="titulo">Registrar Producto</h2>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="nuevoProducto()">Nuevo
+                            Producto</button>
+                    </div>
+    
+                    <form id="productoForm" class="formulario1" method="POST" action="{% url 'registrar_producto' %}"
+                        enctype="multipart/form-data">
+                        <div class="formulario2">
+                            {% csrf_token %}
+                            <input type="hidden" id="productoId" name="producto_id" value="">
+    
+                            <div class="inputbox">
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                <label>Nombre</label>
+                            </div>
+    
+                            <div class="inputbox">
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="1"
+                                    required></textarea>
+                                <label>Descripción</label>
+                            </div>
+    
+                            <div class="inputbox">
+                                <input type="number" step="0.01" class="form-control" id="precio" name="precio"
+                                    required>
+                                <label>Precio</label>
+                            </div>
+    
+                            <div class="inputbox">
+                                <input type="number" class="form-control" id="stock" name="stock" required>
+                                <label>Stock</label>
+                            </div>
+    
+                            <div class="mb-3">
+                                <label for="categoria" class="form-label">Categoría</label>
+                                <select class="form-select" id="categoria" name="categoria" required>
+                                    {% for key, value in categoria_choices %}
+                                    <option value="{{ key }}">{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+    
+                            <div class="mb-3">
+                                <label for="tipo" class="form-label">Tipo</label>
+                                <select class="form-select" id="tipo" name="tipo" required>
+                                    {% for key, value in tipo_choices %}
+                                    <option value="{{ key }}">{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+    
+                            <div class="inputbox">
+                                <input type="file" class="form-control" id="imagen" name="imagen">
+                                <label>Imagen</label>
+                            </div>
+    
+                            <button type="submit" class="boton mt-3">Guardar Producto</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <div class="modal fade" id="eliminarProductoModal" tabindex="-1" aria-labelledby="eliminarProductoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarProductoModalLabel">Eliminar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMensaje"></p>
+                    <form id="eliminarProductoForm" method="POST" action="{% url 'eliminar_producto' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="producto_id" id="productoIdEliminar" value="">
+                        <input type="hidden" name="stock_disponible" id="stockDisponible" value="">
+                        <div class="mb-3">
+                            <label for="stockEliminar" class="form-label">Cantidad de stock a eliminar</label>
+                            <input type="number" class="form-control" id="stockEliminar" name="stock_eliminar" required>
+                            <small id="stockDisponibleTexto" class="form-text text-muted"></small>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <p>Risco Colorado, 2024. Todos los derechos reservados.</p>
+        <ul>
+            <li><a href="#">Contacto</a></li>
+            <li><a href="#">Políticas de privacidad</a></li>
+            <li><a href="#">Términos y condiciones</a></li>
+        </ul>
+        <div class="social-media">
+            <a href="#"><img src="{% static 'images/facebook.png' %}" alt="facebook"></a>
+            <a href="#"><img src="{% static 'images/instagram.png' %}" alt="instagram"></a>
+            <a href="#"><img src="{% static 'images/twitter.png' %}" alt="twitter"></a>
+        </div>
+    </footer>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(elems);
+        });
+    </script>
+
+
+    <script>
+        // Barra de búsqueda: Filtrar productos en tiempo real
+        document.getElementById('searchProducts').addEventListener('input', function () {
+            const searchQuery = this.value.toLowerCase();
+            const productCards = document.querySelectorAll('.product-card');
+
+            productCards.forEach(function (card) {
+                const nombre = card.getAttribute('data-nombre').toLowerCase();
+                const categoria = card.getAttribute('data-categoria').toLowerCase();
+
+                // Mostrar u ocultar productos según coincidencia con la búsqueda
+                if (nombre.includes(searchQuery) || categoria.includes(searchQuery)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Cargar producto en el formulario desde la tarjeta seleccionada
+        function cargarProductoDesdeHTML(element) {
+            const productoId = element.getAttribute('data-id');
+            const nombre = element.getAttribute('data-nombre');
+            const descripcion = element.getAttribute('data-descripcion');
+            const precio = element.getAttribute('data-precio');
+            const stock = element.getAttribute('data-stock');
+            const categoria = element.getAttribute('data-categoria');
+            const tipo = element.getAttribute('data-tipo');
+
+            // Rellenar el formulario con los datos del producto seleccionado
+            document.getElementById('formTitle').textContent = "Editar Producto";
+            document.getElementById('productoForm').action = `/editar-producto/${productoId}/`;
+            document.getElementById('productoId').value = productoId;
+            document.getElementById('nombre').value = nombre;
+            document.getElementById('descripcion').value = descripcion;
+            document.getElementById('precio').value = precio;
+            document.getElementById('stock').value = stock;
+            document.getElementById('categoria').value = categoria;
+            document.getElementById('tipo').value = tipo;
+        }
+
+        // Reiniciar formulario para registrar un nuevo producto
+        function nuevoProducto() {
+            document.getElementById('formTitle').textContent = "Registrar Producto";
+            document.getElementById('productoForm').action = `/registrar-producto/`;
+            document.getElementById('productoForm').reset();
+            document.getElementById('productoId').value = "";
+        }
+        function eliminarProducto(event, productoId, productoNombre, productoStock) {
+            event.stopPropagation(); // Evita que el evento "onclick" del producto se dispare
+            const confirmacion = confirm(`¿Seguro que quieres eliminar el producto "${productoNombre}"? 
+Stock disponible: ${productoStock}`);
+            if (confirmacion) {
+                // Redirige a la URL de eliminación (ajusta según tu configuración)
+                window.location.href = `/eliminar-producto/${productoId}/`;
+            }
+        }
+        function abrirEliminarModal(productoId, productoNombre, stockDisponible) {
+            // Configurar el contenido del modal
+            document.getElementById("productoIdEliminar").value = productoId;
+            document.getElementById("stockDisponible").value = stockDisponible;
+            document.getElementById("modalMensaje").textContent = `¿Seguro que deseas eliminar parte del stock del producto "${productoNombre}"?`;
+            document.getElementById("stockDisponibleTexto").textContent = `Stock disponible: ${stockDisponible}`;
+
+            // Resetear el campo de cantidad
+            document.getElementById("stockEliminar").value = "";
+
+            // Mostrar el modal
+            const modal = new bootstrap.Modal(document.getElementById("eliminarProductoModal"));
+            modal.show();
+        }
+
+    </script>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+
+</html>

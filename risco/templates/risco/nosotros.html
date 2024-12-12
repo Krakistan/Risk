@@ -2,6 +2,7 @@
 <html lang="en">
 {% load static %}
 
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,6 +20,25 @@
             background-repeat: no-repeat;
             height: 100vh;
             margin: 0;
+        }
+        .user-name-container {
+            background-color: #5e2e0c;
+            color: #ffffff; /* Texto blanco */
+            border-radius: 20px; /* Bordes redondeados */
+            padding: 8px 15px; /* Espaciado interno */
+            display: inline-block; /* Tamaño ajustado al contenido */
+            font-weight: bold; /* Texto en negrita */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+            font-size: 16px; /* Tamaño del texto */
+            margin: 0 10px; /* Separación con otros elementos */
+            text-align: center; /* Alineación del texto */
+            transition: all 0.3s ease; /* Transición suave */
+        }
+        
+        .user-name-container:hover {
+            background-color: #5e2e0c;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+            cursor: pointer; /* Manita al pasar el mouse */
         }
     </style>
 </head>
@@ -39,6 +59,8 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
@@ -51,17 +73,34 @@
                             <a class="nav-link nav-button" href="{% url 'cotizacion' %}">Cotiza</a>
                         </li>
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'carrito' %}">Carrito</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link nav-button dropdown-toggle nav-link nav-button d-flex align-items-center p-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
+                                <img src="{% static 'images/acceso.png' %}" alt="User" class="rounded-circle" style="width: 24px; height: 24px; margin-right: 5px;">
+                                <p>{{ user.first_name }}</p>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'miperfil' %}">Mi perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'carrito' %}">Carrito</a></li>
+                                <li><a class="dropdown-item" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a></li>
+                                {% if user.is_staff or user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_productos' %}">Gestionar Productos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_usuarios' %}">Usuarios Registrados</a>
+                                </li>
+                                {% endif %}
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
-                        </li>
+
+
+
                         {% else %}
                         <li class="nav-item">
                             <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
                         </li>
                         {% endif %}
+                        
                     </ul>
                 </div>
             </div>

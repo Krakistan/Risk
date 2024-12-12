@@ -21,6 +21,39 @@
                 height: 100vh;
                 margin: 0;
             }
+
+            /* Estilo para la alerta */
+.alert-dismissible {
+    position: relative;
+    margin-bottom: 20px;
+    padding-right: 50px;
+}
+
+/* Botón de cierre (X) */
+.alert-dismissible .close {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    padding: 10px;
+    color: inherit;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+}
+
+/* Animación de desvanecimiento para la alerta */
+.fade {
+    transition: opacity 0.5s ease;
+}
+
+.show {
+    opacity: 1;
+}
+
+.hide {
+    opacity: 0;
+}
+
     
             /* Contenedor principal del formulario */
             .container-iniciarsesion {
@@ -146,6 +179,25 @@
                 text-align: center;
                 margin-bottom: 20px;
             }
+            .user-name-container {
+                background-color: #5e2e0c;
+                color: #ffffff; /* Texto blanco */
+                border-radius: 20px; /* Bordes redondeados */
+                padding: 8px 15px; /* Espaciado interno */
+                display: inline-block; /* Tamaño ajustado al contenido */
+                font-weight: bold; /* Texto en negrita */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+                font-size: 16px; /* Tamaño del texto */
+                margin: 0 10px; /* Separación con otros elementos */
+                text-align: center; /* Alineación del texto */
+                transition: all 0.3s ease; /* Transición suave */
+            }
+            
+            .user-name-container:hover {
+                background-color: #5e2e0c;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+                cursor: pointer; /* Manita al pasar el mouse */
+            }
         </style>
 </head>
 
@@ -165,6 +217,8 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
@@ -177,17 +231,34 @@
                             <a class="nav-link nav-button" href="{% url 'cotizacion' %}">Cotiza</a>
                         </li>
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'carrito' %}">Carrito</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link nav-button dropdown-toggle nav-link nav-button d-flex align-items-center p-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
+                                <img src="{% static 'images/acceso.png' %}" alt="User" class="rounded-circle" style="width: 24px; height: 24px; margin-right: 5px;">
+                                <p>{{ user.first_name }}</p>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'miperfil' %}">Mi perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'carrito' %}">Carrito</a></li>
+                                <li><a class="dropdown-item" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a></li>
+                                {% if user.is_staff or user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_productos' %}">Gestionar Productos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_usuarios' %}">Usuarios Registrados</a>
+                                </li>
+                                {% endif %}
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
-                        </li>
+
+
+
                         {% else %}
                         <li class="nav-item">
                             <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
                         </li>
                         {% endif %}
+                        
                     </ul>
                 </div>
             </div>
@@ -196,34 +267,55 @@
 
     </header>
 
-<section>
-
+    <section>
         <div class="container-iniciarsesion mt-5">
             <div class="card card-body">
                 <h1 class="text-center">Formulario de despacho</h1>
-        
+                
                 <div class="alert alert-success text-center">
                     Bienvenido <strong>{{ user.first_name }}</strong>
                 </div>
-                
-    
+                        
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                 {% endfor %}
             {% endif %}
-    
-            <form method="POST">
+            
+            <form method="POST" action="{% url 'checkout' %}">
                 {% csrf_token %}
-                {{ form.as_p }}
-    
-                <button type="submit" class="btn btn-success btn-block">Confirmar despacho </button>
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" class="form-control" id="direccion" name="direccion" required>
+                </div>
+                <div class="form-group">
+                    <label for="ciudad">Ciudad</label>
+                    <input type="text" class="form-control" id="ciudad" name="ciudad" required>
+                </div>
+                <div class="form-group">
+                    <label for="region">Región</label>
+                    <input type="text" class="form-control" id="region" name="region" required>
+                </div>
+                <div class="form-group">
+                    <label for="codigo_postal">Código Postal</label>
+                    <input type="text" class="form-control" id="codigo_postal" name="codigo_postal" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Confirmar Dirección</button>
             </form>
             </div>
         </div>
-    
-</section>
+    </section>
 
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" id="alert-message">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+{% endif %}
 
     <footer>
         <p>Risco Colorado, 2024. Todos los derechos reservados.</p>
@@ -239,17 +331,39 @@
         </div>
     </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var elems = document.querySelectorAll('.sidenav');
-            var instances = M.Sidenav.init(elems);
+        // Script para validar el formulario antes de enviarlo
+        document.getElementById('checkout-form').addEventListener('submit', function(event) {
+            // Prevenir el envío inmediato
+            event.preventDefault();
+    
+            // Validar los campos (puedes agregar más validaciones si lo deseas)
+            var direccion = document.getElementById('id_direccion').value;
+            var region = document.getElementById('id_region').value;
+            var ciudad = document.getElementById('id_ciudad').value;
+            var codigo_postal = document.getElementById('id_codigo_postal').value;
+    
+            // Verificar que los campos no estén vacíos
+            if (!direccion || !region || !ciudad || !codigo_postal) {
+                alert('Por favor, complete todos los campos.');
+                return;
+            }
+    
+            // Si todo está bien, enviar el formulario
+            this.submit();
         });
     </script>
     <script>
-        function filtrarPorCategoria() {
-            alert("Esta funcionalidad estará disponible pronto.");
-            // Aquí puedes implementar la lógica para filtrar por categoría
-        }
+        // Tiempo en milisegundos antes de que la alerta se cierre automáticamente (ej. 5 segundos = 5000ms)
+        setTimeout(function() {
+            var alertMessage = document.getElementById('alert-message');
+            if (alertMessage) {
+                alertMessage.classList.remove('show');
+                alertMessage.classList.add('hide');
+            }
+        }, 5000);  // Cierra la alerta después de 5 segundos (5000ms)
     </script>
+    
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 

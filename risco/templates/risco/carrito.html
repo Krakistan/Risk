@@ -20,6 +20,25 @@
             height: 100vh;
             margin: 0;
         }
+        .user-name-container {
+            background-color: #5e2e0c;
+            color: #ffffff; /* Texto blanco */
+            border-radius: 20px; /* Bordes redondeados */
+            padding: 8px 15px; /* Espaciado interno */
+            display: inline-block; /* Tamaño ajustado al contenido */
+            font-weight: bold; /* Texto en negrita */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+            font-size: 16px; /* Tamaño del texto */
+            margin: 0 10px; /* Separación con otros elementos */
+            text-align: center; /* Alineación del texto */
+            transition: all 0.3s ease; /* Transición suave */
+        }
+        
+        .user-name-container:hover {
+            background-color: #5e2e0c;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+            cursor: pointer; /* Manita al pasar el mouse */
+        }
     </style>
 </head>
 
@@ -39,6 +58,8 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
@@ -51,17 +72,34 @@
                             <a class="nav-link nav-button" href="{% url 'cotizacion' %}">Cotiza</a>
                         </li>
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'carrito' %}">Carrito</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link nav-button dropdown-toggle nav-link nav-button d-flex align-items-center p-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
+                                <img src="{% static 'images/acceso.png' %}" alt="User" class="rounded-circle" style="width: 24px; height: 24px; margin-right: 5px;">
+                                <p>{{ user.first_name }}</p>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'miperfil' %}">Mi perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'carrito' %}">Carrito</a></li>
+                                <li><a class="dropdown-item" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a></li>
+                                {% if user.is_staff or user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_productos' %}">Gestionar Productos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="dropdown-item" href="{% url 'gestion_usuarios' %}">Usuarios Registrados</a>
+                                </li>
+                                {% endif %}
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-button" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
-                        </li>
+
+
+
                         {% else %}
                         <li class="nav-item">
                             <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
                         </li>
                         {% endif %}
+                        
                     </ul>
                 </div>
             </div>
@@ -70,63 +108,135 @@
 
     </header>
 
-    <section>
-        
-        <section class="container my-5" id="carrito">
-            <h2 class="text-center mb-4">Carrito de Compras</h2>
-            
-            <div class="row">
-                <!-- Columna Izquierda: Productos en el Carrito -->
-                <div class="col-md-8">
-                    <div class="productos-container scrollable">
-                        {% for producto in carrito %}
-                        <div class="card mb-3" style="max-width: 540px;">
-                            <div class="row g-0">
-                                <!-- Imagen del Producto -->
-                                <div class="col-md-4">
-                                    {% if producto.imagen %}
-                                    <img src="{{ producto.imagen }}" class="img-fluid rounded-start" alt="{{ producto.nombre }}">
-                                    {% else %}
-                                    <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start" alt="Imagen no disponible">
-                                    {% endif %}
-                                </div>
-                                <!-- Contenido de la Tarjeta -->
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ producto.nombre }}</h5>
-                                        <p class="card-text">Precio: ${{ producto.precio }}</p>
-                                        <p class="card-text">Cantidad: {{ producto.cantidad }}</p>
-                                        <div class="d-flex justify-content-between">
-                                            <a href="{% url 'aumentarcant' producto.id_producto %}" class="btn btn-sm btn-success">+</a>
-                                            <a href="{% url 'disminuircant' producto.id_producto %}" class="btn btn-sm btn-warning">-</a>
-                                            <a href="{% url 'eliminarproducto' producto.id_producto %}" class="btn btn-sm btn-danger">Eliminar</a>
-                                        </div>
-                                    </div>
+
+<section class="container my-5" id="carrito">
+    <h2 class="text-center mb-4">Carrito de Compras</h2>
+    <div class="row">
+        <!-- Columna Izquierda: Productos de Venta -->
+        <div class="col-md-4">
+            <h3 class="text-center">Productos de Venta</h3>
+            <div class="productos-container scrollable">
+                {% for producto in carrito_venta %}
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            {% if producto.imagen %}
+                            <img src="{{ producto.imagen }}" class="img-fluid rounded-start" alt="{{ producto.nombre }}">
+                            {% else %}
+                            <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start" alt="Imagen no disponible">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                <p class="card-text">Precio: {{ producto.precio|floatformat:0 }}</p>
+                                <p class="card-text">Cantidad: {{ producto.cantidad }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'aumentarcant' producto.id_producto %}" class="btn btn-sm btn-success">+</a>
+                                    <a href="{% url 'disminuircant' producto.id_producto %}" class="btn btn-sm btn-warning">-</a>
+                                    <a href="{% url 'eliminarproducto' producto.id_producto %}" class="btn btn-sm btn-danger">Eliminar</a>
                                 </div>
                             </div>
                         </div>
-                        {% empty %}
-                        <p class="text-center">No hay productos en el carrito.</p>
-                        {% endfor %}
                     </div>
                 </div>
-        
-                <!-- Columna Derecha: Detalle de la Venta -->
-                <div class="col-md-4">
-                    <div class="card p-3 mb-3">
-                        <h4>Resumen de los productos</h4>
-                        <hr>
-                        <p>Total de productos: {{ total_items }}</p>
-                        <h5>Total a pagar: ${{ total_precio }}</h5>
-                        <a href="{% url 'checkout' %}" class="btn btn-success btn-block mt-3">Despacho</a>
-                    </div>
+                {% empty %}
+                <p class="text-center">No hay productos de venta en el carrito.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Columna Centro: Resumen y Botón -->
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h4 class="text-center">Resumen de Detalles</h4>
+                <hr>
+                <p>Total de productos de venta: {{ total_items_venta }}</p>
+                <p>Total de productos de arriendo: {{ total_items_arriendo }}</p>
+                <h5>Total a pagar (Venta): {{ total_precio_venta|floatformat:0 }}</h5>
+                <h5>Total a pagar (Arriendo): {{ total_precio_arriendo|floatformat:0 }}</h5>
+                <h4>Total general: {{ total_precio|floatformat:0 }}</h4>
+                <button class="btn btn-success btn-block mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#formularioDespacho" aria-expanded="false" aria-controls="formularioDespacho">
+                    Ir a Despacho
+                </button>
+            </div>
+
+            <!-- Formulario Despacho (Colapsable) -->
+            <div class="collapse mt-3" id="formularioDespacho">
+                <div class="card card-body">
+                    <h5 class="text-center">Formulario de Despacho</h5>
+                    <form method="POST" action="{% url 'formulario_despacho' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="direccion">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="region">ciudad</label>
+                            <select class="form-select" id="ciudad" name="ciudad" required>
+                                {% for key, value in form.fields.ciudad.choices %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="region">Región</label>
+                            <select class="form-select" id="region" name="region" required>
+                                {% for key, value in form.fields.region.choices %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="codigo_postal">Código Postal</label>
+                            <input type="text" class="form-control" id="codigo_postal" name="codigo_postal" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Confirmar Dirección</button>
+                    </form>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <!-- Columna Derecha: Productos de Arriendo -->
+        <div class="col-md-4">
+            <h3 class="text-center">Productos de Arriendo</h3>
+            <div class="productos-container scrollable">
+                {% for producto in carrito_arriendo %}
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            {% if producto.imagen %}
+                            <img src="{{ producto.imagen }}" class="img-fluid rounded-start" alt="{{ producto.nombre }}">
+                            {% else %}
+                            <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start" alt="Imagen no disponible">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                <p class="card-text">Precio: {{ producto.precio|floatformat:0 }}</p>
+                                <p class="card-text">Cantidad: {{ producto.cantidad }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'aumentarcant' producto.id_producto %}" class="btn btn-sm btn-success">+</a>
+                                    <a href="{% url 'disminuircant' producto.id_producto %}" class="btn btn-sm btn-warning">-</a>
+                                    <a href="{% url 'eliminarproducto' producto.id_producto %}" class="btn btn-sm btn-danger">Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center">No hay productos de arriendo en el carrito.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
         
         
         
-    </section>
+ 
 
 
     <footer>

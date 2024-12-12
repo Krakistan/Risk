@@ -156,3 +156,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'web-production-8581.up.railway.app']
 
 CSRF_TRUSTED_ORIGINS = ['HTTP://*', 'https://web-production-8581.up.railway.app']
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'riscocoloradopruebas@gmail.com'  
+EMAIL_HOST_PASSWORD = 'xpqu divg ytbb zxnu'    

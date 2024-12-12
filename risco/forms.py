@@ -1,5 +1,5 @@
 from django import forms
-from .models import Cotizacion
+from .models import Ciudad, Cotizacion, DireccionEnvio, Region
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -54,16 +54,87 @@ class CotizacionForm(forms.ModelForm):
         }
         
 
-from .models import DireccionEnvio
-from datetime import date
-
 class DireccionEnvioForm(forms.ModelForm):
     class Meta:
         model = DireccionEnvio
         fields = ['direccion', 'ciudad', 'region', 'codigo_postal']
         widgets = {
             'direccion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dirección'}),
-            'ciudad': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ciudad'}),
-            'region': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Región'}),
+            'ciudad': forms.Select(attrs={'class': 'form-control'}),
+            'region': forms.Select(attrs={'class': 'form-control'}),
             'codigo_postal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código Postal'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['region'].choices = [
+            ('Arica y Parinacota', 'Arica y Parinacota'),
+            ('Tarapacá', 'Tarapacá'),
+            ('Antofagasta', 'Antofagasta'),
+            ('Atacama', 'Atacama'),
+            ('Coquimbo', 'Coquimbo'),
+            ('Valparaíso', 'Valparaíso'),
+            ('Santiago', 'Santiago'),
+            ('Libertador General Bernardo O\'Higgins', 'Libertador General Bernardo O\'Higgins'),
+            ('Maule', 'Maule'),
+            ('Ñuble', 'Ñuble'),
+            ('Biobío', 'Biobío'),
+            ('La Araucanía', 'La Araucanía'),
+            ('Los Ríos', 'Los Ríos'),
+            ('Los Lagos', 'Los Lagos'),
+            ('Aysén del General Carlos Ibáñez del Campo', 'Aysén del General Carlos Ibáñez del Campo'),
+            ('Magallanes y de la Antártica Chilena', 'Magallanes y de la Antártica Chilena'),
+        ]
+
+        self.fields['ciudad'].choices = [
+            ('Arica', 'Arica'),
+            ('Iquique', 'Iquique'),
+            ('Antofagasta', 'Antofagasta'),
+            ('Calama', 'Calama'),
+            ('Copiapó', 'Copiapó'),
+            ('La Serena', 'La Serena'),
+            ('Coquimbo', 'Coquimbo'),
+            ('Valparaíso', 'Valparaíso'),
+            ('Viña del Mar', 'Viña del Mar'),
+            ('Santiago', 'Santiago'),
+            ('Rancagua', 'Rancagua'),
+            ('Talca', 'Talca'),
+            ('Curicó', 'Curicó'),
+            ('Linares', 'Linares'),
+            ('Chillán', 'Chillán'),
+            ('Los Ángeles', 'Los Ángeles'),
+            ('Temuco', 'Temuco'),
+            ('Valdivia', 'Valdivia'),
+            ('Osorno', 'Osorno'),
+            ('Puerto Montt', 'Puerto Montt'),
+            ('Coyhaique', 'Coyhaique'),
+            ('Punta Arenas', 'Punta Arenas'),
+        ]
+
+        
+
+class DireccionEnvio(forms.ModelForm):
+    class Meta:
+        model = DireccionEnvio
+        fields = ['direccion', 'region', 'ciudad', 'codigo_postal']
+        widgets = {
+            'direccion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dirección'}),
+            'region': forms.Select(attrs={'class': 'form-control'}),
+            'ciudad': forms.Select(attrs={'class': 'form-control'}),
+            'codigo_postal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Código Postal'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Cargar las regiones de la base de datos
+        self.fields['region'].queryset = Region.objects.all()
+        
+        # Si ya hay una región seleccionada, cargar las ciudades correspondientes
+        if 'region' in self.data:
+            try:
+                region_id = int(self.data.get('region'))
+                self.fields['ciudad'].queryset = Ciudad.objects.filter(region_id=region_id)
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk:
+            self.fields['ciudad'].queryset = self.instance.region.ciudades.all()
