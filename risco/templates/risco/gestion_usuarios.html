@@ -151,40 +151,41 @@
         <div class="row">
             <!-- Columna Izquierda: Lista de Usuarios -->
             <div class="col-md-6">
-                <h2 class="tituloproductos text-center mb-4">Lista de Usuarios</h2>
-
+                <h2 class="text-center mb-4">Lista de Usuarios</h2>
+    
                 <!-- Barra de búsqueda -->
                 <div class="mb-3">
                     <input type="text" id="searchUsers" class="form-control" placeholder="Buscar usuarios...">
                 </div>
-
+    
                 <!-- Lista de usuarios con scroll -->
                 <div class="usuarios-container scrollable" style="max-height: 400px; overflow-y: auto;">
                     <div class="usuarios lista">
                         {% for usuario in usuarios %}
                         <div class="user-card card mb-3 position-relative" style="max-width: 540px;"
-                            data-id="{{ usuario.id }}" data-username="{{ usuario.username }}"
-                            data-first-name="{{ usuario.first_name }}" data-last-name="{{ usuario.last_name }}"
-                            data-email="{{ usuario.email }}" data-is-superuser="{{ usuario.is_superuser }}"
-                            data-is-staff="{{ usuario.is_staff }}" onclick="cargarUsuarioDesdeHTML(this)">
-
+                             data-id="{{ usuario.id }}" data-username="{{ usuario.username }}"
+                             data-first-name="{{ usuario.first_name }}" data-last-name="{{ usuario.last_name }}"
+                             data-email="{{ usuario.email }}" data-is-superuser="{{ usuario.is_superuser }}"
+                             data-is-staff="{{ usuario.is_staff }}" onclick="cargarUsuarioDesdeHTML(this)">
+    
                             <!-- Botón "X" para eliminar -->
                             <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
-                                onclick="mostrarModalEliminar('{{ usuario.id }}', '{{ usuario.username }}'); event.stopPropagation();">
+                                    onclick="mostrarModalEliminar('{{ usuario.id }}', '{{ usuario.username }}'); event.stopPropagation();">
                                 X
                             </button>
-
+    
                             <div class="row g-0">
-                                <!-- Contenido de la Tarjeta -->
+                                <!-- Imagen del usuario -->
                                 <div class="col-md-4 d-flex align-items-center justify-content-center">
                                     <img src="{% static 'images/user-icon.png' %}" class="img-fluid rounded-circle"
-                                        alt="{{ usuario.username }}" style="max-height: 80px; max-width: 80px;">
+                                         alt="{{ usuario.username }}" style="max-height: 80px; max-width: 80px;">
                                 </div>
+    
+                                <!-- Contenido de la tarjeta -->
                                 <div class="col-md-8">
                                     <div class="card-body">
                                         <h5 class="card-title">{{ usuario.username }}</h5>
-                                        <p class="card-text">Nombre: {{ usuario.first_name }} {{ usuario.last_name }}
-                                        </p>
+                                        <p class="card-text">Nombre: {{ usuario.first_name }} {{ usuario.last_name }}</p>
                                         <p class="card-text">Email: {{ usuario.email }}</p>
                                         <p class="card-text">Superusuario: {{ usuario.is_superuser|yesno:"Sí,No" }}</p>
                                         <p class="card-text">Staff: {{ usuario.is_staff|yesno:"Sí,No" }}</p>
@@ -193,15 +194,15 @@
                             </div>
                         </div>
                         {% empty %}
-                        <p>No hay usuarios registrados.</p>
+                        <p class="text-center">No hay usuarios registrados.</p>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-
+    
             <!-- Modal de Confirmación -->
             <div class="modal fade" id="eliminarUsuarioModal" tabindex="-1" aria-labelledby="eliminarUsuarioModalLabel"
-                aria-hidden="true">
+                 aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -213,60 +214,56 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-danger"
-                                onclick="confirmarEliminarUsuario()">Eliminar</button>
+                            <button type="button" class="btn btn-danger" onclick="confirmarEliminarUsuario()">Eliminar</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-
+    
             <!-- Columna Derecha: Formulario -->
             <div class="col-md-6">
                 <div class="card card-body p-4 shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 id="formTitle" class="titulo">Registrar Usuario</h2>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="nuevoUsuario()">Nuevo
-                            Usuario</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="nuevoUsuario()">Nuevo Usuario</button>
                     </div>
-
+    
                     <form id="usuarioForm" method="POST" action="{% url 'registrar_usuario' %}">
                         {% csrf_token %}
                         <input type="hidden" id="usuarioId" name="usuario_id" value="">
-
+    
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" class="form-control" id="username" name="username" required>
                         </div>
-
+    
                         <div class="mb-3">
                             <label for="first_name" class="form-label">Nombre</label>
                             <input type="text" class="form-control" id="first_name" name="first_name" required>
                         </div>
-
+    
                         <div class="mb-3">
                             <label for="last_name" class="form-label">Apellido</label>
                             <input type="text" class="form-control" id="last_name" name="last_name">
                         </div>
-
+    
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
-
-
-
+    
                         <div class="form-check mb-3">
                             <input type="checkbox" class="form-check-input" id="is_staff" name="is_staff">
                             <label class="form-check-label" for="is_staff">Staff</label>
                         </div>
-
+    
                         <button type="submit" class="btn btn-primary mt-3">Guardar Usuario</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
+    
 
 
 
@@ -288,125 +285,126 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
     <script>
-        // Barra de búsqueda: Filtrar usuarios en tiempo real
-        document.getElementById('searchUsers').addEventListener('input', function () {
-            const searchQuery = this.value.toLowerCase();
-            const userCards = document.querySelectorAll('.user-card');
+       // Barra de búsqueda: Filtrar usuarios en tiempo real
+document.getElementById('searchUsers').addEventListener('input', function () {
+    const searchQuery = this.value.toLowerCase();
+    const userCards = document.querySelectorAll('.user-card');
 
-            userCards.forEach(function (card) {
-                const username = card.getAttribute('data-username').toLowerCase();
-                const email = card.getAttribute('data-email').toLowerCase();
+    userCards.forEach(card => {
+        const username = card.getAttribute('data-username').toLowerCase();
+        const email = card.getAttribute('data-email').toLowerCase();
 
-                // Mostrar u ocultar usuarios según coincidencia con la búsqueda
-                if (username.includes(searchQuery) || email.includes(searchQuery)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+        // Mostrar u ocultar usuarios según coincidencia con la búsqueda
+        card.style.display = (username.includes(searchQuery) || email.includes(searchQuery)) ? 'block' : 'none';
+    });
+});
+
+// Cargar datos del usuario seleccionado en el formulario
+function cargarUsuarioDesdeHTML(element) {
+    const usuarioId = element.getAttribute('data-id');
+    const username = element.getAttribute('data-username');
+    const firstName = element.getAttribute('data-first-name');
+    const lastName = element.getAttribute('data-last-name');
+    const email = element.getAttribute('data-email');
+    const isSuperuser = element.getAttribute('data-is-superuser') === 'true';
+    const isStaff = element.getAttribute('data-is-staff') === 'true';
+
+    // Actualizar el formulario
+    document.getElementById('formTitle').textContent = "Editar Usuario";
+    document.getElementById('usuarioForm').action = `/editar-usuario/${usuarioId}/`;
+    document.getElementById('usuarioId').value = usuarioId;
+    document.getElementById('username').value = username;
+    document.getElementById('first_name').value = firstName;
+    document.getElementById('last_name').value = lastName;
+    document.getElementById('email').value = email;
+    document.getElementById('is_staff').checked = isStaff;
+
+    // Si tienes el checkbox para superusuario
+    if (document.getElementById('is_superuser')) {
+        document.getElementById('is_superuser').checked = isSuperuser;
+    }
+
+    document.getElementById('eliminarUsuario').style.display = 'inline-block';
+}
+
+// Configurar formulario para registrar un nuevo usuario
+function nuevoUsuario() {
+    document.getElementById('formTitle').textContent = "Registrar Usuario";
+    document.getElementById('usuarioForm').action = `/registrar-usuario/`;
+    document.getElementById('usuarioForm').reset();
+    document.getElementById('usuarioId').value = '';
+    document.getElementById('eliminarUsuario').style.display = 'none';
+}
+
+// Eliminar usuario seleccionado
+function eliminarUsuario() {
+    const usuarioId = document.getElementById('usuarioId').value;
+
+    if (!usuarioId) {
+        alert("Selecciona un usuario para eliminar.");
+        return;
+    }
+
+    if (confirm(`¿Estás seguro de que quieres eliminar este usuario?`)) {
+        fetch(`/eliminar-usuario-directo/${usuarioId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Usuario eliminado correctamente.");
+                window.location.reload();
+            } else {
+                alert(data.error || "Error al eliminar el usuario.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Ocurrió un error al intentar eliminar el usuario.");
         });
+    }
+}
 
-        // Cargar datos del usuario seleccionado en el formulario
-        function cargarUsuarioDesdeHTML(element) {
-            const usuarioId = element.getAttribute('data-id');
-            const username = element.getAttribute('data-username');
-            const firstName = element.getAttribute('data-first-name');
-            const lastName = element.getAttribute('data-last-name');
-            const email = element.getAttribute('data-email');
-            const isSuperuser = element.getAttribute('data-is-superuser') === 'true';
-            const isStaff = element.getAttribute('data-is-staff') === 'true';
+let usuarioIdEliminar = null;
 
-            document.getElementById('formTitle').textContent = "Editar Usuario";
-            document.getElementById('usuarioForm').action = `/editar-usuario/${usuarioId}/`;
-            document.getElementById('usuarioId').value = usuarioId;
-            document.getElementById('username').value = username;
-            document.getElementById('first_name').value = firstName;
-            document.getElementById('last_name').value = lastName;
-            document.getElementById('email').value = email;
-            document.getElementById('is_superuser').checked = isSuperuser;
-            document.getElementById('is_staff').checked = isStaff;
+// Mostrar el modal con la confirmación de eliminación
+function mostrarModalEliminar(usuarioId, username) {
+    usuarioIdEliminar = usuarioId;
+    document.getElementById('modalMensaje').textContent = `¿Estás seguro de que deseas eliminar al usuario "${username}"?`;
 
-            document.getElementById('eliminarUsuario').style.display = 'inline-block'; // Mostrar botón de eliminar
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('eliminarUsuarioModal'));
+    modal.show();
+}
+
+// Confirmar y eliminar el usuario del modal
+function confirmarEliminarUsuario() {
+    if (!usuarioIdEliminar) return;
+
+    fetch(`/eliminar-usuario/${usuarioIdEliminar}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         }
-
-        // Reiniciar el formulario para registrar un nuevo usuario
-        function nuevoUsuario() {
-            document.getElementById('formTitle').textContent = "Registrar Usuario";
-            document.getElementById('usuarioForm').action = `/registrar-usuario/`;
-            document.getElementById('usuarioForm').reset();
-            document.getElementById('usuarioId').value = '';
-            document.getElementById('eliminarUsuario').style.display = 'none'; // Ocultar botón de eliminar
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Usuario eliminado correctamente.");
+            window.location.reload();
+        } else {
+            alert(data.error || "Error al eliminar el usuario.");
         }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Ocurrió un error al intentar eliminar el usuario.");
+    });
+}
 
-        // Eliminar un usuario sin restricciones
-        function eliminarUsuario() {
-            const usuarioId = document.getElementById('usuarioId').value;
-
-            if (!usuarioId) {
-                alert("Selecciona un usuario para eliminar.");
-                return;
-            }
-
-            if (confirm(`¿Estás seguro de que quieres eliminar este usuario?`)) {
-                fetch(`/eliminar-usuario-directo/${usuarioId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert("Usuario eliminado correctamente.");
-                            window.location.reload(); // Recargar la página para reflejar los cambios
-                        } else {
-                            alert(data.error || "Error al eliminar el usuario.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        alert("Ocurrió un error al intentar eliminar el usuario.");
-                    });
-            }
-        }
-        let usuarioIdEliminar = null;
-
-        // Mostrar el modal con la confirmación
-        function mostrarModalEliminar(usuarioId, username) {
-            usuarioIdEliminar = usuarioId;
-            const modalMensaje = `¿Estás seguro de que deseas eliminar al usuario "${username}"?`;
-            document.getElementById('modalMensaje').textContent = modalMensaje;
-
-            // Mostrar el modal
-            const modal = new bootstrap.Modal(document.getElementById('eliminarUsuarioModal'));
-            modal.show();
-        }
-
-
-        // Confirmar y eliminar el usuario
-        function confirmarEliminarUsuario() {
-            if (!usuarioIdEliminar) return;
-
-            fetch(`/eliminar-usuario/${usuarioIdEliminar}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Usuario eliminado correctamente.");
-                        window.location.reload(); // Recargar la página para reflejar los cambios
-                    } else {
-                        alert(data.error || "Error al eliminar el usuario.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Ocurrió un error al intentar eliminar el usuario.");
-                });
-        }
 
     </script>
 

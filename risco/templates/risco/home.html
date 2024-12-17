@@ -161,7 +161,6 @@
         </div>
 
 
-        <!-- Contenedor de columnas -->
         <div class="row">
             <!-- Columna Izquierda: Productos en Venta -->
             <div class="col-md-6">
@@ -169,21 +168,15 @@
                 <div class="productos-container scrollable">
                     <div class="productos venta">
                         {% for producto in productos_venta %}
-                        <div class="product-card card mb-3" style="max-width: 540px;"
-                            data-nombre="{{ producto.nombre | lower }}"
-                            data-categoria="{{ producto.categoria | lower }}">
+                        <div class="product-card card mb-3" style="max-width: 540px;" data-nombre="{{ producto.nombre | lower }}" data-categoria="{{ producto.categoria | lower }}">
                             <div class="row g-0">
-                                <!-- Imagen del Producto -->
                                 <div class="col-md-4">
                                     {% if producto.imagen %}
-                                    <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start"
-                                        alt="{{ producto.nombre }}">
+                                    <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start" alt="{{ producto.nombre }}">
                                     {% else %}
-                                    <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
-                                        alt="Imagen no disponible">
+                                    <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start" alt="Imagen no disponible">
                                     {% endif %}
                                 </div>
-                                <!-- Contenido de la Tarjeta -->
                                 <div class="col-md-8">
                                     <div class="card-body">
                                         <h5 class="card-title">{{ producto.nombre }}</h5>
@@ -191,18 +184,12 @@
                                         <p class="card-text">Precio: ${{ producto.precio|floatformat:0 }}</p>
                                         <p class="card-text">Categoría: {{ producto.categoria }}</p>
                                         {% if user.is_authenticated %}
-                                        <a href="{% url 'carrito_with_id' indx=producto.id %}"
-                                            class="nav-link nav-button">Agregar al Carrito</a>
-                                        {% if messages %}
-                                        <ul class="messages">
-                                            {% for message in messages %}
-                                            <li class="{{ message.tags }}">{{ message }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                        {% endif %}
-
+                                        <form method="POST" action="{% url 'agregar_producto_venta' producto.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-primary w-100">Agregar al Carrito</button>
+                                        </form>                                     
                                         {% else %}
-                                        <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Comprar</a>
+                                        <a class="btn btn-secondary w-100" href="{% url 'iniciar_sesion' %}">Iniciar Sesión para Comprar</a>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -214,83 +201,84 @@
                     </div>
                 </div>
             </div>
-
-
+            
+        
             <!-- Columna Derecha: Productos en Arriendo -->
             <div class="col-md-6">
                 <h2 class="tituloproductos text-center mb-4">Productos en Arriendo</h2>
                 <div class="productos-container scrollable">
-                    <div class="productos arriendo">
-                        {% for producto in productos_arriendo %}
-                        <div class="product-card card mb-3" style="max-width: 540px;"
-                            data-nombre="{{ producto.nombre | lower }}"
-                            data-categoria="{{ producto.categoria | lower }}">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    {% if producto.imagen %}
-                                    <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start" alt="{{ producto.nombre }}">
+                    {% for producto in productos_arriendo %}
+                    <div class="product-card card mb-3" style="max-width: 540px;" data-nombre="{{ producto.nombre | lower }}" data-categoria="{{ producto.categoria | lower }}">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}" class="img-fluid rounded-start" alt="{{ producto.nombre }}">
+                                {% else %}
+                                <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start" alt="Imagen no disponible">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                                    <p class="card-text">{{ producto.descripcion }}</p>
+                                    <p class="card-text">Precio por día: ${{ producto.precio|floatformat:0 }}</p>
+                                    <p class="card-text">Stock disponible: {{ producto.stock }}</p>
+                                    {% if user.is_authenticated %}
+                                    <button class="btn btn-success w-100" onclick="abrirModal({{ producto.id }}, '{{ producto.nombre }}', {{ producto.stock }})">Agregar al Carrito</button>
                                     {% else %}
-                                    <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
-                                        alt="Imagen no disponible">
+                                    <a class="btn btn-secondary w-100" href="{% url 'iniciar_sesion' %}">Iniciar Sesión para Rentar</a>
                                     {% endif %}
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ producto.nombre }}</h5>
-                                        <p class="card-text">{{ producto.descripcion }}</p>
-                                        <p class="card-text">Precio por día: ${{ producto.precio|floatformat:0 }}</p>
-                                        <p class="card-text">Stock disponible: {{ producto.stock }}</p>
-                                        {% if user.is_authenticated %}
-                                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#formularioArriendo{{ producto.id }}" aria-expanded="false"
-                                            aria-controls="formularioArriendo{{ producto.id }}">
-                                            Elegir fechas y cantidad
-                                        </button>
-                                        {% else %}
-                                        <a class="btn btn-secondary btn-sm" href="{% url 'iniciar_sesion' %}">Iniciar Sesión para
-                                            Rentar</a>
-                                        {% endif %}
-            
-                                        <!-- Formulario colapsable -->
-                                        <div class="collapse mt-3" id="formularioArriendo{{ producto.id }}">
-                                            <div class="card card-body">
-                                                <form method="POST" action="{% url 'carrito' producto.id %}">
-                                                    {% csrf_token %}
-                                                    <div class="mb-3">
-                                                        <label for="fecha_inicio_{{ producto.id }}" class="form-label">Fecha de
-                                                            Inicio</label>
-                                                        <input type="date" class="form-control" id="fecha_inicio_{{ producto.id }}"
-                                                            name="fecha_inicio" min="{{ today|date:'Y-m-d' }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="fecha_fin_{{ producto.id }}" class="form-label">Fecha de
-                                                            Fin</label>
-                                                        <input type="date" class="form-control" id="fecha_fin_{{ producto.id }}"
-                                                            name="fecha_fin" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="cantidad_{{ producto.id }}" class="form-label">Cantidad</label>
-                                                        <input type="number" class="form-control" id="cantidad_{{ producto.id }}"
-                                                            name="cantidad" min="1" max="{{ producto.stock }}" required>
-                                                    </div>
-                                                    <input type="hidden" name="producto_id" value="{{ producto.id }}">
-                                                    <button type="submit" class="btn btn-success w-100">Agregar al Carrito</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        {% empty %}
-                        <p class="text-center">No hay productos disponibles para arriendo.</p>
-                        {% endfor %}
                     </div>
+                    {% empty %}
+                    <p class="text-center">No hay productos disponibles para arriendo.</p>
+                    {% endfor %}
                 </div>
             </div>
             
+
+            
+            
+
+
+        </div>
+        
+
     </section>
 
+<!-- Modal de Arriendo -->
+<div class="modal fade" id="modalArriendo" tabindex="-1" aria-labelledby="modalArriendoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalArriendoLabel">Agregar al Carrito</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formArriendo" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="productoId" name="producto_id">
+                    <h5 id="productoNombre" class="text-center mb-3"></h5>
+                    <div class="mb-3">
+                        <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                        <input type="date" class="form-control" id="fechaInicio" name="fecha_inicio" min="{{ today|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaFin" class="form-label">Fecha de Fin</label>
+                        <input type="date" class="form-control" id="fechaFin" name="fecha_fin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidad" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Confirmar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -312,75 +300,78 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var elems = document.querySelectorAll('.sidenav');
-            var instances = M.Sidenav.init(elems);
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const startDateInput = document.getElementById('fecha_inicio');
-            const endDateInput = document.getElementById('fecha_fin');
-
-            // Set initial min date for start date to today
+            // Toggle para las cards colapsables
+            document.querySelectorAll('.toggle-form').forEach(button => {
+                button.addEventListener('click', function () {
+                    const targetElement = document.querySelector(this.getAttribute('data-target'));
+                    document.querySelectorAll('.collapse.show').forEach(openCard => openCard.classList.remove('show'));
+                    targetElement.classList.toggle('show');
+                });
+            });
+    
+            // Configuración de fechas para inicio y fin
             const today = new Date().toISOString().split('T')[0];
-            startDateInput.min = today;
-
-            startDateInput.addEventListener('change', function () {
-                // Set minimum end date to be at least one day after start date
-                const startDate = new Date(startDateInput.value);
-                startDate.setDate(startDate.getDate() + 1);
-
-                const minEndDate = startDate.toISOString().split('T')[0];
-                endDateInput.min = minEndDate;
-
-                // Reset end date if it's before the new minimum
-                if (new Date(endDateInput.value) <= new Date(startDateInput.value)) {
-                    endDateInput.value = '';
-                }
+            document.querySelectorAll('input[name="fecha_inicio"]').forEach(startDateInput => {
+                const endDateInput = document.querySelector(`#fecha_fin_${startDateInput.id.split('_')[2]}`);
+    
+                startDateInput.min = today;
+                startDateInput.addEventListener('change', function () {
+                    const startDate = new Date(startDateInput.value);
+                    startDate.setDate(startDate.getDate() + 1);
+                    endDateInput.min = startDate.toISOString().split('T')[0];
+    
+                    if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
+                        endDateInput.value = '';
+                    }
+                });
             });
+    
+            // Filtro por categoría
+            const categorySelect = document.getElementById('categorySelect');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', function () {
+                    const selectedCategory = this.value.toLowerCase();
+                    document.querySelectorAll('.product-card').forEach(card => {
+                        const categoria = card.getAttribute('data-categoria').toLowerCase();
+                        card.style.display = selectedCategory === "" || categoria === selectedCategory ? 'block' : 'none';
+                    });
+                });
+            }
+    
+            // Filtro en tiempo real por búsqueda
+            const searchBar = document.getElementById('searchBar');
+            if (searchBar) {
+                searchBar.addEventListener('input', function () {
+                    const searchQuery = this.value.toLowerCase();
+                    document.querySelectorAll('.product-card').forEach(card => {
+                        const nombre = card.getAttribute('data-nombre').toLowerCase();
+                        const categoria = card.getAttribute('data-categoria').toLowerCase();
+                        card.style.display = nombre.includes(searchQuery) || categoria.includes(searchQuery) ? 'block' : 'none';
+                    });
+                });
+            }
         });
     </script>
     <script>
-        function filtrarPorCategoria() {
-            const selectedCategory = document.getElementById('categorySelect').value.toLowerCase();
-            const productCards = document.querySelectorAll('.product-card');
+function abrirModal(productoId, productoNombre, maxStock) {
+    // Asigna valores a los elementos del modal
+    document.getElementById('productoId').value = productoId;
+    document.getElementById('productoNombre').innerText = productoNombre;
+    document.getElementById('cantidad').setAttribute('max', maxStock);
+    document.getElementById('cantidad').value = 1;
 
-            productCards.forEach(function (card) {
-                const categoria = card.getAttribute('data-categoria').toLowerCase();
+    // Configura la acción del formulario
+    const form = document.getElementById('formArriendo');
+    form.action = `/agregar_producto_arriendo/${productoId}/`;
 
-                // Mostrar todas las tarjetas si no hay categoría seleccionada
-                if (selectedCategory === "") {
-                    card.style.display = 'block';
-                } else if (categoria === selectedCategory) {
-                    card.style.display = 'block'; // Mostrar si coincide
-                } else {
-                    card.style.display = 'none'; // Ocultar si no coincide
-                }
-            });
-        }
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('modalArriendo'));
+    modal.show();
+}
+
     </script>
-
-    <script>
-        // Selecciona la barra de búsqueda y agrega un evento 'input' para filtrar los productos en tiempo real
-        document.getElementById('searchBar').addEventListener('input', function () {
-            let searchQuery = this.value.toLowerCase();
-            let productCards = document.querySelectorAll('.product-card');
-
-            productCards.forEach(function (card) {
-                let nombre = card.getAttribute('data-nombre');
-                let categoria = card.getAttribute('data-categoria');
-
-                // Filtrar por nombre o categoría
-                if (nombre.includes(searchQuery) || categoria.includes(searchQuery)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-
+    
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 

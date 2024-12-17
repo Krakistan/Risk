@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 {% load static %}
@@ -12,193 +11,206 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-        <style>
-            body {
-                background-image: url("/static/images/fondo.jpg");
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                height: 100vh;
-                margin: 0;
-            }
+    <style>
+        body {
+            background-image: url("/static/images/fondo.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+        }
 
-            /* Estilo para la alerta */
-.alert-dismissible {
-    position: relative;
-    margin-bottom: 20px;
-    padding-right: 50px;
-}
+        /* Estilo para la alerta */
+        .alert-dismissible {
+            position: relative;
+            margin-bottom: 20px;
+            padding-right: 50px;
+        }
 
-/* Botón de cierre (X) */
-.alert-dismissible .close {
-    position: absolute;
-    top: 0;
-    right: 10px;
-    padding: 10px;
-    color: inherit;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-}
+        /* Botón de cierre (X) */
+        .alert-dismissible .close {
+            position: absolute;
+            top: 0;
+            right: 10px;
+            padding: 10px;
+            color: inherit;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+        }
 
-/* Animación de desvanecimiento para la alerta */
-.fade {
-    transition: opacity 0.5s ease;
-}
+        /* Animación de desvanecimiento para la alerta */
+        .fade {
+            transition: opacity 0.5s ease;
+        }
 
-.show {
-    opacity: 1;
-}
+        .show {
+            opacity: 1;
+        }
 
-.hide {
-    opacity: 0;
-}
+        .hide {
+            opacity: 0;
+        }
 
-    
-            /* Contenedor principal del formulario */
-            .container-iniciarsesion {
-                max-width: 800px;
-                padding: 20px;
-                background-color: rgba(255, 255, 255, 0.9);
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                margin: 0 auto;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-                min-height: 60vh;
-            }
-    
-            /* Formulario centrado */
-            .formulario1 {
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                margin-top: 20px;
-                width: 650px;
-            }
-    
-            /* Ajustar el formulario interno */
-            .formulario2 {
-                text-align: left;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-                max-width: 400px;
-                margin: 0 auto;
-                height: auto;
-            }
-    
-            /* Estilo de la caja de entrada */
-            .inputbox {
-                position: relative;
-                margin-top: 20px;
-                width: 100%;
-                max-width: 310px;
-                border-bottom: 2px solid #171717;
-            }
-    
-            .inputbox input,
-            .inputbox textarea {
-                width: 100%;
-                border: none;
-                outline: none;
-                font-size: 1rem;
-                padding: 5px;
-                color: #060606;
-                background: none;
-            }
-    
-            .inputbox label {
-                position: absolute;
-                top: 0;
-                left: 5px;
-                transform: translateY(0);
-                color: #000000;
-                font-size: 1rem;
-                pointer-events: none;
-                transition: all 0.3s ease-in-out;
-            }
-    
-            input:focus~label,
-            input:valid~label,
-            textarea:focus~label,
-            textarea:valid~label {
-                top: -20px;
-                font-size: 0.85rem;
-            }
-    
-            /* Botón de envío */
-            .boton {
-                width: 100%;
-                max-width: 310px;
-                height: 45px;
-                border-radius: 50px;
-                background-color: #95460e;
-                border: 2px solid #95460e;
-                outline: none;
-                cursor: pointer;
-                font-size: 1rem;
-                font-weight: 600;
-                transition: all 0.7s ease;
-                color: #ffffff;
-                margin-top: 30px;
-            }
-    
-            .boton:hover {
-                background-color: #5e2e0c;
-            }
-    
-    
-            .register{
-                margin-top: 80px;
-            }
-    
-            /* Ajustar enlace de registro */
-            .card-body a {
-                background-color: #95460e;
-                color: #fff;
-                border-radius: 10px;
-                padding: 8px 15px;
-                text-decoration: none;
-            }
-    
-            .card-body a:hover {
-                background-color: #5e2e0c;
-            }
-    
-    
-    
-            /* Título */
-            .titulo {
-                color: #000000;
-                text-align: center;
-                margin-bottom: 20px;
-            }
-            .user-name-container {
-                background-color: #5e2e0c;
-                color: #ffffff; /* Texto blanco */
-                border-radius: 20px; /* Bordes redondeados */
-                padding: 8px 15px; /* Espaciado interno */
-                display: inline-block; /* Tamaño ajustado al contenido */
-                font-weight: bold; /* Texto en negrita */
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
-                font-size: 16px; /* Tamaño del texto */
-                margin: 0 10px; /* Separación con otros elementos */
-                text-align: center; /* Alineación del texto */
-                transition: all 0.3s ease; /* Transición suave */
-            }
-            
-            .user-name-container:hover {
-                background-color: #5e2e0c;
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-                cursor: pointer; /* Manita al pasar el mouse */
-            }
-        </style>
+
+        /* Contenedor principal del formulario */
+        .container-iniciarsesion {
+            max-width: 800px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            min-height: 60vh;
+        }
+
+        /* Formulario centrado */
+        .formulario1 {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            width: 650px;
+        }
+
+        /* Ajustar el formulario interno */
+        .formulario2 {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            height: auto;
+        }
+
+        /* Estilo de la caja de entrada */
+        .inputbox {
+            position: relative;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 310px;
+            border-bottom: 2px solid #171717;
+        }
+
+        .inputbox input,
+        .inputbox textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            padding: 5px;
+            color: #060606;
+            background: none;
+        }
+
+        .inputbox label {
+            position: absolute;
+            top: 0;
+            left: 5px;
+            transform: translateY(0);
+            color: #000000;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        input:focus~label,
+        input:valid~label,
+        textarea:focus~label,
+        textarea:valid~label {
+            top: -20px;
+            font-size: 0.85rem;
+        }
+
+        /* Botón de envío */
+        .boton {
+            width: 100%;
+            max-width: 310px;
+            height: 45px;
+            border-radius: 50px;
+            background-color: #95460e;
+            border: 2px solid #95460e;
+            outline: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.7s ease;
+            color: #ffffff;
+            margin-top: 30px;
+        }
+
+        .boton:hover {
+            background-color: #5e2e0c;
+        }
+
+
+        .register {
+            margin-top: 80px;
+        }
+
+        /* Ajustar enlace de registro */
+        .card-body a {
+            background-color: #95460e;
+            color: #fff;
+            border-radius: 10px;
+            padding: 8px 15px;
+            text-decoration: none;
+        }
+
+        .card-body a:hover {
+            background-color: #5e2e0c;
+        }
+
+
+
+        /* Título */
+        .titulo {
+            color: #000000;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .user-name-container {
+            background-color: #5e2e0c;
+            color: #ffffff;
+            /* Texto blanco */
+            border-radius: 20px;
+            /* Bordes redondeados */
+            padding: 8px 15px;
+            /* Espaciado interno */
+            display: inline-block;
+            /* Tamaño ajustado al contenido */
+            font-weight: bold;
+            /* Texto en negrita */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Sombra para resaltar */
+            font-size: 16px;
+            /* Tamaño del texto */
+            margin: 0 10px;
+            /* Separación con otros elementos */
+            text-align: center;
+            /* Alineación del texto */
+            transition: all 0.3s ease;
+            /* Transición suave */
+        }
+
+        .user-name-container:hover {
+            background-color: #5e2e0c;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            /* Sombra más pronunciada */
+            cursor: pointer;
+            /* Manita al pasar el mouse */
+        }
+    </style>
 </head>
 
 
@@ -218,7 +230,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                
+
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
@@ -232,8 +244,11 @@
                         </li>
                         {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link nav-button dropdown-toggle nav-link nav-button d-flex align-items-center p-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
-                                <img src="{% static 'images/acceso.png' %}" alt="User" class="rounded-circle" style="width: 24px; height: 24px; margin-right: 5px;">
+                            <a class="nav-link nav-button dropdown-toggle nav-link nav-button d-flex align-items-center p-1"
+                                href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                style="background-color: transparent; border: none;">
+                                <img src="{% static 'images/acceso.png' %}" alt="User" class="rounded-circle"
+                                    style="width: 24px; height: 24px; margin-right: 5px;">
                                 <p>{{ user.first_name }}</p>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="userDropdown">
@@ -242,10 +257,12 @@
                                 <li><a class="dropdown-item" href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a></li>
                                 {% if user.is_staff or user.is_superuser %}
                                 <li class="nav-item">
-                                    <a class="dropdown-item" href="{% url 'gestion_productos' %}">Gestionar Productos</a>
+                                    <a class="dropdown-item" href="{% url 'gestion_productos' %}">Gestionar
+                                        Productos</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="dropdown-item" href="{% url 'gestion_usuarios' %}">Usuarios Registrados</a>
+                                    <a class="dropdown-item" href="{% url 'gestion_usuarios' %}">Usuarios
+                                        Registrados</a>
                                 </li>
                                 {% endif %}
                             </ul>
@@ -258,7 +275,7 @@
                             <a class="nav-link nav-button" href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a>
                         </li>
                         {% endif %}
-                        
+
                     </ul>
                 </div>
             </div>
@@ -267,56 +284,256 @@
 
     </header>
 
-    <section>
-        <div class="container-iniciarsesion mt-5">
-            <div class="card card-body">
-                <h1 class="text-center">Formulario de Despacho</h1>
-                
-                <div class="alert alert-success text-center">
-                    Bienvenido <strong>{{ user.first_name }}</strong>
-                </div>
-                        
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-    
-                <form method="POST" action="{% url 'formulario_despacho' %}">
-                    {% csrf_token %}
-                    <div class="form-group mb-3">
-                        <label for="id_direccion">Dirección</label>
-                        {{ form.direccion }}
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="id_region">Región</label>
-                        {{ form.region }}
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="id_ciudad">Ciudad</label>
-                        {{ form.ciudad }}
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="id_codigo_postal">Código Postal</label>
-                        {{ form.codigo_postal }}
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Confirmar Dirección</button>
-                </form>
-            </div>
+    <section class="container my-5" id="despacho">
+        <div class="d-flex justify-content-center align-items-center" style="width: 100%;">
+            <h2 class="tituloproductos text-center mb-4" style="width: auto;">
+                Despacho de productos
+            </h2>
         </div>
+
+        <div class="row">
+            <!-- Columna Izquierda: Productos en Venta -->
+            <div class="col-md-4">
+                <h2 class="tituloproductos text-center mb-4">Productos en Venta</h2>
+                <div class="productos-container scrollable">
+                    <div class="productos venta">
+                        {% for item in carrito_venta %}
+                        <div class="product-card card mb-3 position-relative" style="max-width: 540px;">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    {% if item.producto.imagen %}
+                                    <img src="{{ item.producto.imagen.url }}" class="img-fluid rounded-start"
+                                        alt="{{ item.producto.nombre }}">
+                                    {% else %}
+                                    <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
+                                        alt="Imagen no disponible">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ item.producto.nombre }}</h5>
+                                        <p class="card-text">Precio: ${{ item.producto.precio|floatformat:0 }} CLP</p>
+                                        <p class="card-text">Cantidad: {{ item.cantidad }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center">No hay productos en el carrito de venta.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Centro: Productos en Arriendo -->
+            <div class="col-md-4">
+                <h2 class="tituloproductos text-center mb-4">Productos en Arriendo</h2>
+                <div class="productos-container scrollable">
+                    <div class="productos arriendo">
+                        {% for item in carrito_arriendo %}
+                        <div class="product-card card mb-3 position-relative" style="max-width: 540px;">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    {% if item.producto.imagen %}
+                                    <img src="{{ item.producto.imagen.url }}" class="img-fluid rounded-start"
+                                        alt="{{ item.producto.nombre }}">
+                                    {% else %}
+                                    <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded-start"
+                                        alt="Imagen no disponible">
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ item.producto.nombre }}</h5>
+                                        <p class="card-text">Precio por día: ${{ item.producto.precio|floatformat:0 }}
+                                            CLP</p>
+                                        <p class="card-text">Días: {{ item.dias_arriendo }}</p>
+                                        <p class="card-text">Cantidad: {{ item.cantidad }}</p>
+                                        <p class="card-text">Total: ${{ item.total_precio|floatformat:0 }} CLP</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center">No hay productos en el carrito de arriendo.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Formulario de Despacho -->
+            <div class="col-md-4">
+                <h2 class="tituloproductos text-center mb-4">Formulario de Despacho</h2>
+                <div class="card card-body p-4 shadow-sm">
+                    <form method="POST" action="{% url 'despacho' %}">
+                        {% csrf_token %}
+
+                        <!-- Dirección -->
+                        <div class="inputbox">
+                            <input type="text" class="form-control" id="direccion" name="direccion" placeholder=" "
+                                required>
+                            <label for="direccion">Dirección (Calle, Número)</label>
+                        </div>
+
+
+                        <div class="inputbox">
+                            <select class="form-select" id="region" name="region" required>
+                                <option value="" disabled selected>Selecciona una Región</option>
+                                <option value="Arica y Parinacota">Arica y Parinacota</option>
+                                <option value="Tarapacá">Tarapacá</option>
+                                <option value="Antofagasta">Antofagasta</option>
+                                <option value="Atacama">Atacama</option>
+                                <option value="Coquimbo">Coquimbo</option>
+                                <option value="Valparaíso">Valparaíso</option>
+                                <option value="Metropolitana">Metropolitana</option>
+                                <option value="O'Higgins">O'Higgins</option>
+                                <option value="Maule">Maule</option>
+                                <option value="Ñuble">Ñuble</option>
+                                <option value="Biobío">Biobío</option>
+                                <option value="La Araucanía">La Araucanía</option>
+                                <option value="Los Ríos">Los Ríos</option>
+                                <option value="Los Lagos">Los Lagos</option>
+                                <option value="Aysén">Aysén</option>
+                                <option value="Magallanes">Magallanes</option>
+                            </select>
+                        </div>
+
+                        <!-- Ciudad -->
+                        <div class="inputbox">
+                            <select class="form-select" id="ciudad" name="ciudad" required>
+                                <option value="" disabled selected>Selecciona una Comuna</option>
+                                <!-- Arica y Parinacota -->
+                                <optgroup label="Arica y Parinacota">
+                                    <option value="Arica">Arica</option>
+                                    <option value="Camarones">Camarones</option>
+                                    <option value="Putre">Putre</option>
+                                    <option value="General Lagos">General Lagos</option>
+                                </optgroup>
+                                <!-- Tarapacá -->
+                                <optgroup label="Tarapacá">
+                                    <option value="Iquique">Iquique</option>
+                                    <option value="Alto Hospicio">Alto Hospicio</option>
+                                    <option value="Pozo Almonte">Pozo Almonte</option>
+                                    <option value="Camiña">Camiña</option>
+                                    <option value="Colchane">Colchane</option>
+                                    <option value="Huara">Huara</option>
+                                    <option value="Pica">Pica</option>
+                                </optgroup>
+                                <!-- Antofagasta -->
+                                <optgroup label="Antofagasta">
+                                    <option value="Antofagasta">Antofagasta</option>
+                                    <option value="Mejillones">Mejillones</option>
+                                    <option value="Sierra Gorda">Sierra Gorda</option>
+                                    <option value="Taltal">Taltal</option>
+                                    <option value="Calama">Calama</option>
+                                    <option value="Ollagüe">Ollagüe</option>
+                                    <option value="San Pedro de Atacama">San Pedro de Atacama</option>
+                                    <option value="Tocopilla">Tocopilla</option>
+                                    <option value="María Elena">María Elena</option>
+                                </optgroup>
+                                <!-- Atacama -->
+                                <optgroup label="Atacama">
+                                    <option value="Copiapó">Copiapó</option>
+                                    <option value="Caldera">Caldera</option>
+                                    <option value="Tierra Amarilla">Tierra Amarilla</option>
+                                    <option value="Chañaral">Chañaral</option>
+                                    <option value="Diego de Almagro">Diego de Almagro</option>
+                                    <option value="Vallenar">Vallenar</option>
+                                    <option value="Alto del Carmen">Alto del Carmen</option>
+                                    <option value="Freirina">Freirina</option>
+                                    <option value="Huasco">Huasco</option>
+                                </optgroup>
+                                <!-- Coquimbo -->
+                                <optgroup label="Coquimbo">
+                                    <option value="La Serena">La Serena</option>
+                                    <option value="Coquimbo">Coquimbo</option>
+                                    <option value="Andacollo">Andacollo</option>
+                                    <option value="La Higuera">La Higuera</option>
+                                    <option value="Paihuano">Paihuano</option>
+                                    <option value="Vicuña">Vicuña</option>
+                                    <option value="Illapel">Illapel</option>
+                                    <option value="Canela">Canela</option>
+                                    <option value="Los Vilos">Los Vilos</option>
+                                    <option value="Salamanca">Salamanca</option>
+                                    <option value="Ovalle">Ovalle</option>
+                                    <option value="Combarbalá">Combarbalá</option>
+                                    <option value="Monte Patria">Monte Patria</option>
+                                    <option value="Punitaqui">Punitaqui</option>
+                                    <option value="Río Hurtado">Río Hurtado</option>
+                                </optgroup>
+                                <!-- Valparaíso -->
+                                <optgroup label="Valparaíso">
+                                    <option value="Valparaíso">Valparaíso</option>
+                                    <option value="Viña del Mar">Viña del Mar</option>
+                                    <option value="Quilpué">Quilpué</option>
+                                    <option value="Villa Alemana">Villa Alemana</option>
+                                    <option value="Casablanca">Casablanca</option>
+                                    <option value="Concón">Concón</option>
+                                    <option value="Quintero">Quintero</option>
+                                    <option value="Puchuncaví">Puchuncaví</option>
+                                    <option value="San Antonio">San Antonio</option>
+                                    <option value="Cartagena">Cartagena</option>
+                                </optgroup>
+                                <!-- Metropolitana -->
+                                <optgroup label="Metropolitana">
+                                    <option value="Santiago">Santiago</option>
+                                    <option value="Puente Alto">Puente Alto</option>
+                                    <option value="Maipú">Maipú</option>
+                                    <option value="La Florida">La Florida</option>
+                                    <option value="Ñuñoa">Ñuñoa</option>
+                                    <option value="Providencia">Providencia</option>
+                                    <option value="Las Condes">Las Condes</option>
+                                    <option value="San Bernardo">San Bernardo</option>
+                                    <option value="Melipilla">Melipilla</option>
+                                    <option value="Talagante">Talagante</option>
+                                </optgroup>
+                                <!-- Biobío -->
+                                <optgroup label="Biobío">
+                                    <option value="Concepción">Concepción</option>
+                                    <option value="Chillán">Chillán</option>
+                                    <option value="Los Ángeles">Los Ángeles</option>
+                                    <option value="Lota">Lota</option>
+                                    <option value="Talcahuano">Talcahuano</option>
+                                    <option value="Tomé">Tomé</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+
+                        <!-- Código Postal -->
+                        <div class="inputbox">
+                            <input type="text" class="form-control" id="codigo_postal" name="codigo_postal"
+                                placeholder=" " pattern="\d{7}" maxlength="7" title="Formato: 7 dígitos (Ej: 1234567)"
+                                required>
+                            <label for="codigo_postal">Código Postal</label>
+                            <small class="form-text text-muted">Formato: 7 dígitos (Ej: 1234567)</small>
+                        </div>
+
+                        <!-- Botón de Envío -->
+                        <button type="submit" class="boton mt-3">Confirmar Dirección y Enviar</button>
+                    </form>
+                </div>
+            </div>
+
+
+
     </section>
-    
+
+
+
+
+
 
     {% if messages %}
     {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" id="alert-message">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" id="alert-message">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     {% endfor %}
-{% endif %}
+    {% endif %}
 
     <footer>
         <p>Risco Colorado, 2024. Todos los derechos reservados.</p>
@@ -332,39 +549,45 @@
         </div>
     </footer>
     <script>
-        // Script para validar el formulario antes de enviarlo
-        document.getElementById('checkout-form').addEventListener('submit', function(event) {
-            // Prevenir el envío inmediato
-            event.preventDefault();
-    
-            // Validar los campos (puedes agregar más validaciones si lo deseas)
-            var direccion = document.getElementById('id_direccion').value;
-            var region = document.getElementById('id_region').value;
-            var ciudad = document.getElementById('id_ciudad').value;
-            var codigo_postal = document.getElementById('id_codigo_postal').value;
-    
-            // Verificar que los campos no estén vacíos
-            if (!direccion || !region || !ciudad || !codigo_postal) {
-                alert('Por favor, complete todos los campos.');
-                return;
-            }
-    
-            // Si todo está bien, enviar el formulario
-            this.submit();
+        document.addEventListener('DOMContentLoaded', function () {
+            const regionSelect = document.getElementById('region');
+            const ciudadSelect = document.getElementById('ciudad');
+
+            regionSelect.addEventListener('change', function () {
+                const regionSeleccionada = this.value;
+
+                // Limpiar las opciones anteriores
+                ciudadSelect.innerHTML = '<option value="" disabled selected>Cargando...</option>';
+
+                // Realizar petición AJAX a la vista get_ciudades
+                fetch(`/get_ciudades/?region=${encodeURIComponent(regionSeleccionada)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la petición');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        ciudadSelect.innerHTML = '<option value="" disabled selected>Selecciona una Ciudad</option>';
+                        // Insertar las opciones dinámicamente
+                        data.ciudades.forEach(ciudad => {
+                            const option = document.createElement('option');
+                            option.value = ciudad.id;
+                            option.textContent = ciudad.nombre;
+                            ciudadSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar las ciudades:', error);
+                        ciudadSelect.innerHTML = '<option value="" disabled>Error al cargar</option>';
+                    });
+            });
         });
+
     </script>
-    <script>
-        // Tiempo en milisegundos antes de que la alerta se cierre automáticamente (ej. 5 segundos = 5000ms)
-        setTimeout(function() {
-            var alertMessage = document.getElementById('alert-message');
-            if (alertMessage) {
-                alertMessage.classList.remove('show');
-                alertMessage.classList.add('hide');
-            }
-        }, 5000);  // Cierra la alerta después de 5 segundos (5000ms)
-    </script>
-    
-    
+
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 

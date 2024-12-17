@@ -1,14 +1,15 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.forms import ValidationError
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
-class Productos(models.Model):
-    nombre = models.CharField(max_length=100)
-    descripcion = models.CharField(max_length=100)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.PositiveIntegerField()
-    
-    # Categorías posibles para productos
+
+
+
+class Producto(models.Model):
+
     CATEGORIA_CHOICES = [
         ('Materiales de Construcción', 'Materiales de Construcción'),
         ('Cemento y Hormigón', 'Cemento y Hormigón'),
@@ -61,174 +62,182 @@ class Productos(models.Model):
         ('Cortadoras de Pavimento', 'Cortadoras de Pavimento'),
         ('Perforadoras y Equipos de Demolición', 'Perforadoras y Equipos de Demolición')
     ]
-    
-    categoria = models.CharField(
-        max_length=255,
-        choices=CATEGORIA_CHOICES,
-        default='Construcción'
-    )
-    
+
     TIPO_CHOICES = [
         ('Venta', 'Venta'),
         ('Arriendo', 'Arriendo'),
     ]
-    
-    tipo = models.CharField(
-        max_length=10,
-        choices=TIPO_CHOICES,
-        default='Venta'
-    )
-    
+
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField()
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default='Venta')
+    categoria = models.CharField(max_length=255, choices=CATEGORIA_CHOICES, default='Materiales de Construcción')
     imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.tipo})"
 
-class Producto(models.Model):
-    nombre = models.CharField(max_length=255)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-    imagen = models.ImageField(upload_to='productos/', null=True, blank=True)
+
+
+
+
+# Modelo para productos en venta
+class CarritoVenta(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    producto = models.ForeignKey('Producto', on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    nombre_producto = models.CharField(max_length=100)
+    precio_producto = models.DecimalField(max_digits=10, decimal_places=2)
+    imagen_producto = models.ImageField(upload_to='carrito/venta/', blank=True, null=True)
+
+    @property
+    def total_precio(self):
+        return self.cantidad * self.precio_producto
 
     def __str__(self):
-        return self.nombre
+        return f"{self.cantidad} x {self.nombre_producto} (Venta - {self.usuario.username})"
 
-class Maquinaria(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    descripcion = models.TextField()
-    disponible = models.BooleanField(default=True)
-    precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+# Modelo para productos en arriendo
+
+
+class CarritoArriendo(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="arriendos")
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="arriendos")
+    cantidad = models.PositiveIntegerField(default=1)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
-    imagen = models.ImageField(upload_to='productos/', null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Carrito de Arriendo")
+        verbose_name_plural = _("Carritos de Arriendo")
+
+    def clean(self):
+        # Validar fechas
+        if self.fecha_fin < self.fecha_inicio:
+            raise ValidationError(_("La fecha de fin debe ser posterior o igual a la fecha de inicio."))
+        
+        # Validar stock
+        if self.cantidad > self.producto.stock:
+            raise ValidationError(_(f"Stock insuficiente para el producto '{self.producto.nombre}'. Disponible: {self.producto.stock}."))
 
     @property
-    def imagenURL(self):
-        if self.imagen:
-            return self.imagen.url
-        return '/static/images/default.png'
+    def dias_arriendo(self):
+        return (self.fecha_fin - self.fecha_inicio).days + 1
 
-    def _str_(self):
-        return f"Maquinaria de {self.nombre}"
-    
-class Reserva(models.Model):
-    id = models.AutoField(primary_key=True)
-    maquinaria = models.ForeignKey(Maquinaria, on_delete=models.CASCADE)
-    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
-    fecha_inicio = models.DateField()
-    fecha_fin = models.DateField()
-    estado = models.BooleanField(default=True, verbose_name='Estado')
+    @property
+    def total_precio(self):
+        return self.cantidad * self.producto.precio * self.dias_arriendo
+
+    def reducir_stock(self):
+        if self.producto.stock >= self.cantidad:
+            self.producto.stock -= self.cantidad
+            self.producto.save()
+        else:
+            raise ValidationError(_(f"Stock insuficiente para reducir del producto '{self.producto.nombre}'."))
+
+    def save(self, *args, **kwargs):
+        # Ejecutar validaciones
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto.nombre} - {self.dias_arriendo} días ({self.usuario.username})"
 
 
+
+
+
+
+# Modelo para las órdenes (cuando el carrito se finaliza)
 class Orden(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE,
-        related_name="ordenes"  # Relación inversa clara para el usuario
-    )
-    direccion_envio = models.OneToOneField(
-        'DireccionEnvio', 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True, 
-        related_name='orden_asociada'  # Cambiar el related_name para evitar conflicto
-    )
-    fecha_orden = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
     completo = models.BooleanField(default=False)
-    transaccion_id = models.CharField(max_length=200, null=True, blank=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def calcular_totales(self):
+        detalles = self.detalleorden_set.all()
+        self.total = sum(detalle.total_precio for detalle in detalles)
+        self.save()
+
+    def __str__(self):
+        return f"Orden {self.id} - {self.usuario.username}"
+
+
+# Detalles de la orden (relación con los productos comprados/rentados)
+class DetalleOrden(models.Model):
+    orden = models.ForeignKey(Orden, related_name="detalleorden_set", on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
 
     @property
-    def get_total_carrito(self):
-        return sum(articulo.get_total for articulo in self.articuloorden_set.all())
+    def total_precio(self):
+        return self.cantidad * self.precio_unitario
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto.nombre} (Orden {self.orden.id})"
+
+class DetalleVenta(models.Model):
+    pedido = models.ForeignKey('Pedido', related_name="detalles_venta", on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
 
     @property
-    def get_cantidad_carrito(self):
-        return sum(articulo.cantidad for articulo in self.articuloorden_set.all())
+    def total_precio(self):
+        return self.cantidad * self.precio_unitario
+
+class DetalleArriendo(models.Model):
+    pedido = models.ForeignKey('Pedido', related_name="detalles_arriendo", on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+
+    @property
+    def dias_arriendo(self):
+        return (self.fecha_fin - self.fecha_inicio).days + 1
+
+    @property
+    def total_precio(self):
+        return self.cantidad * self.producto.precio * self.dias_arriendo
 
 
+class Pedido(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    direccion = models.CharField(max_length=255)
+    ciudad = models.CharField(max_length=100)
+    region = models.CharField(max_length=100)
+    codigo_postal = models.CharField(max_length=10)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Pedido #{self.id} - {self.usuario.username}"
+
+
+
+
+
+
+# Modelo para la dirección de envío
 class DireccionEnvio(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True
-    )
-    orden = models.OneToOneField(
-        Orden, 
-        on_delete=models.CASCADE, 
-        related_name='direccion_asignada'  # Cambiar el related_name para evitar conflicto
-    )
-    direccion = models.CharField(max_length=200)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    orden = models.OneToOneField(Orden, on_delete=models.CASCADE, related_name="direccion_envio")
+    direccion = models.CharField(max_length=255)
     ciudad = models.CharField(max_length=100)
     region = models.CharField(max_length=100)
     codigo_postal = models.CharField(max_length=20)
-    fecha_agregado = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.direccion}, {self.ciudad}, {self.region} ({self.codigo_postal})"
 
 
-
-
-
-class DetalleOrden(models.Model):
-    orden = models.ForeignKey(
-        'Orden', 
-        related_name='detalles', 
-        on_delete=models.CASCADE
-    )
-    producto = models.CharField(max_length=255)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-    cantidad = models.PositiveIntegerField()
-
-    def __str__(self):
-        return f"{self.cantidad} x {self.producto} (Orden ID: {self.orden.id})"
-
-    @property
-    def get_total(self):
-        return self.precio * self.cantidad
-
-
-
-
-
-
-class ArticuloOrden(models.Model):
-    orden = models.ForeignKey(Orden, related_name='articuloorden_set', on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.IntegerField(default=0)
-
-    def _str_(self):
-        return f"{self.cantidad} de {self.producto.nombre}"
-
-    @property
-    def get_total(self):
-        return self.producto.precio * self.cantidad
-
-
-class Region(models.Model):
-    nombre = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.nombre
-
-class Ciudad(models.Model):
-    nombre = models.CharField(max_length=100)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='ciudades')
-
-    def __str__(self):
-        return f"{self.nombre} ({self.region.nombre})"
-
-
-class Compra(models.Model):
-    nombre_cliente = models.CharField(max_length=50)
-    fecha = models.DateField()
-
-class ProductosCompra(models.Model):
-    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    id_compra = models.ForeignKey(Compra, on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
-
+#Cotizacion 
 
 class Cotizacion(models.Model):
     nombre = models.CharField(max_length=100)
@@ -238,21 +247,3 @@ class Cotizacion(models.Model):
 
     def __str__(self):
         return self.nombre
-    
-
-class Carrito(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Productos, on_delete=models.CASCADE)
-    cantidad = models.PositiveIntegerField(default=1)
-
-    def __str__(self):
-        return f"{self.usuario.username} - {self.producto.nombre} ({self.cantidad})"
-
-
-
-class RentalCartItem(models.Model):
-    producto = models.ForeignKey(Productos, on_delete=models.CASCADE)
-    fecha_inicio = models.DateField()
-    fecha_fin = models.DateField()
-    cantidad = models.IntegerField(default=1)
-
