@@ -60,20 +60,22 @@
 
     </header>
 
-<section>
 
-
-<div class="container-iniciarsesion mt-5">
-    <div class="card card-body">
-        <h2 class='titulo'>Correo Enviado</h2>
-        <p>Se ha enviado un enlace para restablecer tu contraseña a tu correo electrónico.</p>
-        <a href="{% url 'iniciar_sesion' %}">Volver a iniciar sesión</a>
-        
-    </div>
-</div>
-
+    <section>
     
-</section>
+    
+
+        <div class="container-iniciarsesion mt-5">
+            <div class="card card-body">
+                <h2 class="titulo">¡Enlace Enviado</h2>
+                <div class="formulario2">
+                    <p>Revise su gmail y siga instruccinones.</p>
+                    <a class="boton" href="{% url 'home' %}">Home</a>
+                </div>
+            </div>
+        </div>
+        
+    </section>
 
 
     <footer>

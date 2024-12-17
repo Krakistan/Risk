@@ -196,6 +196,7 @@
 
 
 <body>
+    <div id="notification-container" class="notification-container"></div>
     <header>
 
 
@@ -296,11 +297,38 @@
         });
     </script>
     <script>
-        function filtrarPorCategoria() {
-            alert("Esta funcionalidad estará disponible pronto.");
-            // Aquí puedes implementar la lógica para filtrar por categoría
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notification-container');
+            container.innerHTML = ''; // Limpiar notificaciones previas
+    
+            // Crear la notificación
+            const notification = document.createElement('div');
+            notification.className = `ui ${type} message`; // Clase de Semantic UI
+            notification.style.margin = '10px auto';
+            notification.style.maxWidth = '600px';
+            notification.innerHTML = `
+                <i class="close icon" onclick="this.parentElement.style.display='none'"></i>
+                <div class="header">${type === 'error' ? 'Error' : 'Éxito'}</div>
+                <p>${message}</p>
+            `;
+    
+            // Añadir la notificación al contenedor
+            container.appendChild(notification);
+    
+            // Desaparecer después de 5 segundos
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
         }
+    
+        // Ejemplo de notificación al confirmar el pedido
+        document.addEventListener("DOMContentLoaded", function () {
+            const successMessage = "¡Tu pedido ha sido confirmado exitosamente!";
+            showNotification(successMessage, 'success');
+        });
     </script>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 

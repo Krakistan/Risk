@@ -82,6 +82,7 @@
 
 
 <body>
+    <div id="notification-container" class="notification-container"></div>
     <header>
 
 
@@ -410,7 +411,123 @@ function confirmarEliminarUsuario() {
 
 
 
-
+    <script>
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            container.innerHTML = ''; // Limpiar notificaciones previas
+    
+            const notification = document.createElement('div');
+            notification.className = `ui ${type} message alert-dismissible fade show`;
+            notification.style.margin = '10px auto';
+            notification.style.maxWidth = '600px';
+            notification.innerHTML = `
+                <i class="close icon" onclick="this.parentElement.style.display='none'"></i>
+                <div class="header">${type === 'error' ? 'Error' : 'Notificación'}</div>
+                <p>${message}</p>
+            `;
+    
+            container.appendChild(notification);
+    
+            // Desaparecer automáticamente después de 5 segundos
+            setTimeout(() => {
+                if (notification) {
+                    notification.classList.add('hide');
+                    setTimeout(() => notification.remove(), 500);
+                }
+            }, 5000);
+        }
+    
+        // Filtrar usuarios en tiempo real
+        document.getElementById('searchUsers').addEventListener('input', function () {
+            const searchQuery = this.value.toLowerCase();
+            const userCards = document.querySelectorAll('.user-card');
+    
+            let found = false;
+            userCards.forEach(card => {
+                const username = card.getAttribute('data-username').toLowerCase();
+                const email = card.getAttribute('data-email').toLowerCase();
+    
+                if (username.includes(searchQuery) || email.includes(searchQuery)) {
+                    card.style.display = 'block';
+                    found = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+    
+            // Mostrar notificación si no se encuentran usuarios
+            if (!found && searchQuery) {
+                showNotification("No se encontraron usuarios con la búsqueda ingresada.", 'error');
+            }
+        });
+    
+        // Cargar datos del usuario en el formulario
+        function cargarUsuarioDesdeHTML(element) {
+            const usuarioId = element.getAttribute('data-id');
+            const username = element.getAttribute('data-username');
+            const firstName = element.getAttribute('data-first-name');
+            const lastName = element.getAttribute('data-last-name');
+            const email = element.getAttribute('data-email');
+            const isStaff = element.getAttribute('data-is-staff') === 'true';
+    
+            document.getElementById('formTitle').textContent = "Editar Usuario";
+            document.getElementById('usuarioForm').action = `/editar-usuario/${usuarioId}/`;
+            document.getElementById('usuarioId').value = usuarioId;
+            document.getElementById('username').value = username;
+            document.getElementById('first_name').value = firstName;
+            document.getElementById('last_name').value = lastName;
+            document.getElementById('email').value = email;
+            document.getElementById('is_staff').checked = isStaff;
+    
+            showNotification("Usuario cargado correctamente. Puedes editar la información.", 'success');
+        }
+    
+        // Configurar formulario para nuevo usuario
+        function nuevoUsuario() {
+            document.getElementById('formTitle').textContent = "Registrar Usuario";
+            document.getElementById('usuarioForm').action = `/registrar-usuario/`;
+            document.getElementById('usuarioForm').reset();
+            document.getElementById('usuarioId').value = '';
+            showNotification("Formulario listo para registrar un nuevo usuario.", 'info');
+        }
+    
+        let usuarioIdEliminar = null;
+    
+        // Mostrar modal de confirmación para eliminar usuario
+        function mostrarModalEliminar(usuarioId, username) {
+            usuarioIdEliminar = usuarioId;
+            document.getElementById('modalMensaje').textContent = `¿Estás seguro de que deseas eliminar al usuario "${username}"?`;
+            const modal = new bootstrap.Modal(document.getElementById('eliminarUsuarioModal'));
+            modal.show();
+        }
+    
+        // Confirmar y eliminar el usuario desde el modal
+        function confirmarEliminarUsuario() {
+            if (!usuarioIdEliminar) return;
+    
+            fetch(`/eliminar-usuario/${usuarioIdEliminar}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification("Usuario eliminado correctamente.", 'success');
+                    window.location.reload();
+                } else {
+                    showNotification(data.error || "Error al eliminar el usuario.", 'error');
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showNotification("Ocurrió un error al intentar eliminar el usuario.", 'error');
+            });
+        }
+    </script>
+    
 
 </body>
 

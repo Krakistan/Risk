@@ -120,6 +120,7 @@
 
 
 <body>
+    <div id="notification-container" class="notification-container"></div>
     <header>
 
 
@@ -485,7 +486,92 @@ Stock disponible: ${productoStock}`);
         }
 
     </script>
-
+    <script>
+        // Función para mostrar notificaciones dinámicas
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            container.innerHTML = ''; // Limpiar notificaciones anteriores
+    
+            const notification = document.createElement('div');
+            notification.className = `ui ${type} message alert-dismissible fade show`;
+            notification.style.margin = '10px auto';
+            notification.style.maxWidth = '600px';
+            notification.innerHTML = `
+                <i class="close icon" onclick="this.parentElement.style.display='none'"></i>
+                <div class="header">${type === 'error' ? 'Error' : 'Notificación'}</div>
+                <p>${message}</p>
+            `;
+    
+            container.appendChild(notification);
+    
+            // Desaparecer automáticamente después de 5 segundos
+            setTimeout(() => {
+                if (notification) {
+                    notification.classList.add('hide');
+                    setTimeout(() => notification.remove(), 500);
+                }
+            }, 5000);
+        }
+    
+        // Validar el formulario antes de enviarlo
+        document.getElementById('productoForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevenir envío por defecto
+    
+            const nombre = document.getElementById('nombre').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const precio = document.getElementById('precio').value.trim();
+            const stock = document.getElementById('stock').value.trim();
+            const categoria = document.getElementById('categoria').value;
+            const tipo = document.getElementById('tipo').value;
+    
+            // Validaciones
+            if (!nombre || !descripcion || !precio || !stock || !categoria || !tipo) {
+                showNotification("Todos los campos son obligatorios. Por favor, completa el formulario.", 'error');
+                return;
+            }
+    
+            if (isNaN(precio) || precio <= 0) {
+                showNotification("El precio debe ser un número positivo.", 'error');
+                return;
+            }
+    
+            if (isNaN(stock) || stock < 0) {
+                showNotification("El stock debe ser un número mayor o igual a 0.", 'error');
+                return;
+            }
+    
+            // Si todo está correcto
+            showNotification("Producto guardado exitosamente. Procesando...", 'success');
+    
+            // Descomentar para enviar el formulario realmente
+            this.submit();
+        });
+    
+        // Validación antes de eliminar stock en el modal
+        document.getElementById('eliminarProductoForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+    
+            const stockDisponible = parseInt(document.getElementById('stockDisponible').value);
+            const stockEliminar = parseInt(document.getElementById('stockEliminar').value);
+    
+            if (isNaN(stockEliminar) || stockEliminar <= 0) {
+                showNotification("La cantidad a eliminar debe ser mayor a 0.", 'error');
+                return;
+            }
+    
+            if (stockEliminar > stockDisponible) {
+                showNotification("La cantidad a eliminar no puede superar el stock disponible.", 'error');
+                return;
+            }
+    
+            // Si todo está correcto
+            showNotification("Stock eliminado correctamente. Actualizando...", 'success');
+    
+            // Descomentar para enviar el formulario realmente
+            this.submit();
+        });
+    </script>
+    
 
 
 

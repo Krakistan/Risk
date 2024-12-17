@@ -25,6 +25,7 @@
 
 
 <body>
+    <div id="notification-container" class="notification-container"></div>
     <header>
 
 
@@ -186,7 +187,7 @@
                                         {% if user.is_authenticated %}
                                         <form method="POST" action="{% url 'agregar_producto_venta' producto.id %}">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn btn-primary w-100">Agregar al Carrito</button>
+                                            <button type="submit" class="btn btn-success w-100">Agregar al Carrito</button>
                                         </form>                                     
                                         {% else %}
                                         <a class="btn btn-secondary w-100" href="{% url 'iniciar_sesion' %}">Iniciar Sesión para Comprar</a>
@@ -369,6 +370,83 @@ function abrirModal(productoId, productoNombre, maxStock) {
     modal.show();
 }
 
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchBar = document.getElementById('searchBar');
+            const categorySelect = document.getElementById('categorySelect');
+            const productCards = document.querySelectorAll('.product-card');
+    
+            // Función de filtrado general
+            function filtrarProductos() {
+                const searchQuery = searchBar.value.toLowerCase();
+                const selectedCategory = categorySelect.value.toLowerCase();
+                let visible = false;
+    
+                productCards.forEach(card => {
+                    const nombre = card.getAttribute('data-nombre').toLowerCase();
+                    const categoria = card.getAttribute('data-categoria').toLowerCase();
+    
+                    const coincideBusqueda = nombre.includes(searchQuery) || searchQuery === '';
+                    const coincideCategoria = categoria === selectedCategory || selectedCategory === '';
+    
+                    if (coincideBusqueda && coincideCategoria) {
+                        card.style.display = 'block';
+                        card.classList.add('fade-in'); // Efecto de aparición
+                        visible = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+    
+                if (!visible) {
+                    showNotification("No se encontraron productos que coincidan con tu búsqueda.", 'error');
+                }
+            }
+    
+            // Eventos
+            searchBar.addEventListener('input', filtrarProductos);
+            categorySelect.addEventListener('change', filtrarProductos);
+    
+            // Mostrar notificación dinámica
+            function showNotification(message, type) {
+                const container = document.getElementById('notification-container');
+                container.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show text-center" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+    
+                setTimeout(() => {
+                    const alertBox = container.querySelector('.alert');
+                    if (alertBox) {
+                        alertBox.classList.remove('show');
+                        setTimeout(() => alertBox.remove(), 300);
+                    }
+                }, 4000);
+            }
+        });
+    
+        // Abrir modal de arriendo y validar stock
+        function abrirModal(productoId, productoNombre, maxStock) {
+            if (maxStock === 0) {
+                alert('Este producto no tiene stock disponible.');
+                return;
+            }
+            // Asignación de datos al modal
+            document.getElementById('productoId').value = productoId;
+            document.getElementById('productoNombre').innerText = productoNombre;
+            document.getElementById('cantidad').setAttribute('max', maxStock);
+            document.getElementById('cantidad').value = 1;
+    
+            const form = document.getElementById('formArriendo');
+            form.action = `/agregar_producto_arriendo/${productoId}/`;
+    
+            // Mostrar modal
+            const modal = new bootstrap.Modal(document.getElementById('modalArriendo'));
+            modal.show();
+        }
     </script>
     
     

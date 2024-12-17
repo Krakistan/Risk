@@ -82,6 +82,7 @@
 
 
 <body>
+    <div id="notification-container" class="notification-container"></div>
     <header>
 
 
@@ -246,6 +247,52 @@
             reader.readAsDataURL(event.target.files[0]);
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButton = document.getElementById('toggleEdit');
+            const nombreField = document.getElementById('nombre');
+            const emailField = document.getElementById('email');
+            const notificationContainer = document.getElementById('notification-container');
+            const form = document.getElementById('perfilForm');
+            let isEditable = false;
+    
+            // Toggle para habilitar/deshabilitar edición
+            toggleButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                if (isEditable) {
+                    // Validar los campos antes de enviar
+                    if (nombreField.value.trim() === "" || emailField.value.trim() === "") {
+                        mostrarNotificacion("Por favor, completa todos los campos.", "alert-danger");
+                        return;
+                    }
+    
+                    // Simulación de envío exitoso
+                    mostrarNotificacion("Datos guardados exitosamente.", "alert-success");
+                    setTimeout(() => form.submit(), 1500); // Envía el formulario después de 1.5 segundos
+                } else {
+                    // Activar edición
+                    nombreField.readOnly = false;
+                    emailField.readOnly = false;
+                    nombreField.focus();
+                    toggleButton.textContent = "Guardar cambios";
+                }
+                isEditable = !isEditable;
+            });
+    
+            // Función para mostrar notificaciones dinámicas
+            function mostrarNotificacion(mensaje, clase) {
+                notificationContainer.textContent = mensaje;
+                notificationContainer.className = `alert ${clase}`;
+                notificationContainer.style.display = "block";
+    
+                // Ocultar después de 5 segundos
+                setTimeout(() => {
+                    notificationContainer.style.display = "none";
+                }, 5000);
+            }
+        });
+    </script>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 

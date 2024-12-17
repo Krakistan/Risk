@@ -139,6 +139,7 @@
 
 
 <body>
+    <div id="notification-container" class="notification-container"></div>
     <header>
 
 
@@ -226,11 +227,51 @@
         });
     </script>
     <script>
-        function filtrarPorCategoria() {
-            alert("Esta funcionalidad estará disponible pronto.");
-            // Aquí puedes implementar la lógica para filtrar por categoría
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('.formulario1');
+            const notificationContainer = document.getElementById('notification-container');
+    
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Evita el envío inicial del formulario
+    
+                // Obtener los valores de los campos
+                const nombre = form.querySelector('input[name="first_name"]').value.trim();
+                const email = form.querySelector('input[name="email"]').value.trim();
+                const password1 = form.querySelector('input[name="password1"]').value.trim();
+                const password2 = form.querySelector('input[name="password2"]').value.trim();
+    
+                // Validaciones básicas
+                if (!nombre || !email || !password1 || !password2) {
+                    mostrarNotificacion("Todos los campos son obligatorios.", "alert-danger");
+                    return;
+                }
+    
+                if (password1 !== password2) {
+                    mostrarNotificacion("Las contraseñas no coinciden.", "alert-danger");
+                    return;
+                }
+    
+                // Simular éxito (aquí puedes quitar esto cuando conectes al backend)
+                mostrarNotificacion("Registro exitoso. Redirigiendo...", "alert-success");
+                setTimeout(() => {
+                    form.submit(); // Enviar el formulario si pasa las validaciones
+                }, 1500);
+            });
+    
+            // Función para mostrar notificaciones
+            function mostrarNotificacion(mensaje, clase) {
+                notificationContainer.textContent = mensaje;
+                notificationContainer.className = `alert ${clase}`;
+                notificationContainer.style.display = "block";
+    
+                // Ocultar después de 5 segundos
+                setTimeout(() => {
+                    notificationContainer.style.display = "none";
+                }, 5000);
+            }
+        });
     </script>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 

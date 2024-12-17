@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
@@ -5,7 +6,10 @@ from django.contrib.auth import views as auth_views
 from risco import views as pagweb_views
 from risco import views
 from .forms import CustomAuthenticationForm
-from risco.views import CustomPasswordResetView, CustomPasswordResetConfirmView, agregar_producto, confirmacion, despacho, eliminar_producto_carrito
+from risco.views import CustomPasswordResetView, CustomPasswordResetConfirmView, agregar_producto, confirmacion, despacho, eliminar_producto_carrito, password_reset_email_sent
+from django.views.generic import TemplateView
+from risco.views import CustomPasswordResetView, CustomPasswordResetConfirmView
+
 
 urlpatterns = [
     # Página principal
@@ -20,10 +24,7 @@ urlpatterns = [
     path('cerrar-sesion/', auth_views.LogoutView.as_view(next_page='iniciar_sesion'), name='cerrar_sesion'),
     path('registro/', pagweb_views.registro, name='registro'),
 
-    # Recuperación de contraseñas
-    path('password_reset/', CustomPasswordResetView.as_view(), name='password_reset'),
-    path('password_reset_confirm/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='risco/password_reset_complete.html'), name='password_reset_complete'),
+
 
     # Páginas principales
     path('home/', views.home, name='home'),
@@ -66,6 +67,21 @@ urlpatterns = [
 
     # Despacho
     path('get_ciudades/', views.get_ciudades, name='get_ciudades'),
+
+
+
+
+    # Recuperación de contraseñas
+    path('password_reset/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='risco/password_reset_complete.html'), name='password_reset_complete'),
+
+
+    # Página para cambiar contraseña (con user_id)
+    path('password-reset/confirm/<int:user_id>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
+    # Página para confirmar que se envió el correo
+    path('password-reset/enviado/', password_reset_email_sent, name='password_reset_email_sent'),
+
 ]
 
 # Configuración de archivos estáticos y media (solo en DEBUG)

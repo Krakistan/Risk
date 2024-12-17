@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
@@ -17,7 +17,11 @@ from django.utils.html import strip_tags
 from django.db import transaction
 from .models import CarritoArriendo, CarritoVenta, DetalleArriendo, DetalleVenta, Pedido, Producto, DetalleOrden, DireccionEnvio, Cotizacion
 from .forms import CotizacionForm, DireccionEnvioForm, FormularioRegistro
-
+from risco import models
+from django.utils.crypto import get_random_string
+from django.db import models
+from django.contrib.auth.models import User
+from .models import PasswordResetToken
 
 
 
@@ -598,7 +602,7 @@ def eliminar_usuario(request, user_id):
 
 ################################################################
 
-# gestion de productos de admin #
+# gestion de productos de admin #des
 
 
 @user_passes_test(lambda u: u.is_staff or u.is_superuser)
@@ -612,7 +616,6 @@ def gestion_productos(request):
         'categoria_choices': Producto.CATEGORIA_CHOICES,
         'tipo_choices': Producto.TIPO_CHOICES,
     })
-
 
 
 @user_passes_test(lambda u: u.is_staff or u.is_superuser)
@@ -690,56 +693,51 @@ def eliminar_producto(request):
 
 
 # Gestion de cambio de contraseña
+class CustomPasswordResetView(FormView):
+    template_name = 'risco/password_reset_form.html'
+    form_class = PasswordResetForm
 
+    def form_valid(self, form):
+        email = form.cleaned_data.get('email')
+        user = User.objects.filter(email=email).first()
+        
+        if user:
+            reset_url = self.request.build_absolute_uri(
+                reverse('password_reset_confirm', kwargs={'user_id': user.id})
+            )
+            
+            # Send mail with reset link
+            send_mail(
+                'Restablece tu Contraseña', 
+                f'Haz clic en el siguiente enlace para cambiar tu contraseña:\n\n{reset_url}', 
+                settings.EMAIL_HOST_USER, 
+                [email], 
+                fail_silently=False
+            )
+            
+            return redirect('password_reset_email_sent')  # Go to confirmation page
+        else:
+            form.add_error('email', 'No existe un usuario con este correo.')
+            return self.form_invalid(form)
 
+# View: Page to set new password
 class CustomPasswordResetConfirmView(FormView):
     template_name = 'risco/password_reset_confirm.html'
     form_class = SetPasswordForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        email = self.request.GET.get('email')
-        user = User.objects.filter(email=email).first()
-
-        if not user:
-            raise ValueError("No se encontró un usuario con este correo electrónico.")
-
-        # Agrega el usuario a los argumentos del formulario
-        kwargs['user'] = user
+        self.user = get_object_or_404(User, id=self.kwargs.get('user_id'))
+        kwargs['user'] = self.user
         return kwargs
 
     def form_valid(self, form):
-        # Guarda la nueva contraseña
         form.save()
-        
-        return redirect('home')
+        return redirect('password_reset_complete')  # Redirect to success
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['email'] = self.request.GET.get('email')  # Pasar el email al contexto
-        return context
- 
-
-
-class CustomPasswordResetView(FormView):
-    template_name = 'risco/password_reset_form.html'
-    form_class = PasswordResetForm
-
-    def form_valid(self, form):
-        # Obtén el correo del formulario
-        email = form.cleaned_data.get('email')
-
-        # Verifica si el usuario existe
-        user = User.objects.filter(email=email).first()
-        if user:
-            # Redirige al formulario de establecer nueva contraseña con el correo en los parámetros
-            return redirect(f"{reverse('password_reset_confirm')}?email={email}")
-        else:
-            # Si el correo no existe, muestra un mensaje o redirige
-            form.add_error('email', 'No existe un usuario con este correo.')
-            return self.form_invalid(form)
-
-
+# View to show page indicating to check email
+def password_reset_email_sent(request):
+    return render(request, 'risco/revisatugmail.html')
 
 ################################################################
 

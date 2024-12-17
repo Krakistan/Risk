@@ -215,6 +215,7 @@
 
 
 <body>
+    <div id="notification-container" class="notification-container"></div>
     <header>
 
 
@@ -548,43 +549,6 @@
             <a href="#"><img src="{% static 'images/twitter.png' %}" alt="twitter"></a>
         </div>
     </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const regionSelect = document.getElementById('region');
-            const ciudadSelect = document.getElementById('ciudad');
-
-            regionSelect.addEventListener('change', function () {
-                const regionSeleccionada = this.value;
-
-                // Limpiar las opciones anteriores
-                ciudadSelect.innerHTML = '<option value="" disabled selected>Cargando...</option>';
-
-                // Realizar petición AJAX a la vista get_ciudades
-                fetch(`/get_ciudades/?region=${encodeURIComponent(regionSeleccionada)}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error en la petición');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        ciudadSelect.innerHTML = '<option value="" disabled selected>Selecciona una Ciudad</option>';
-                        // Insertar las opciones dinámicamente
-                        data.ciudades.forEach(ciudad => {
-                            const option = document.createElement('option');
-                            option.value = ciudad.id;
-                            option.textContent = ciudad.nombre;
-                            ciudadSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error al cargar las ciudades:', error);
-                        ciudadSelect.innerHTML = '<option value="" disabled>Error al cargar</option>';
-                    });
-            });
-        });
-
-    </script>
 
 
 
